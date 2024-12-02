@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"log"
-	"os"
 	"slices"
 	"strings"
 	"testing"
@@ -24,15 +23,15 @@ func Test_day1_part1_sample(t *testing.T) {
 }
 
 func Test_day1_part1(t *testing.T) {
-	assert.Equal(t, 2285373, distance(parse(readFile("day1.txt"))))
+	assert.Equal(t, 2285373, distance(parse(ReadFile("day1.txt"))))
 }
 
-func readFile(fileName string) string {
-	bytes, err := os.ReadFile(fileName)
-	if err != nil {
-		log.Fatalln("cant read file", err)
-	}
-	return string(bytes)
+func Test_day1_part2_sample(t *testing.T) {
+	assert.Equal(t, 31, similarity(parse(sample)))
+}
+
+func Test_day1_part2(t *testing.T) {
+	assert.Equal(t, 31, similarity(parse(ReadFile("day1.txt"))))
 }
 
 func distance(a []int, b []int) int {
@@ -43,16 +42,9 @@ func distance(a []int, b []int) int {
 	slices.Sort(b)
 	result := 0
 	for i := range len(a) {
-		result += abs(a[i] - b[i])
+		result += Abs(a[i] - b[i])
 	}
 	return result
-}
-
-func abs(n int) int {
-	if n < 0 {
-		return -n
-	}
-	return n
 }
 
 func parse(s string) ([]int, []int) {
@@ -85,4 +77,20 @@ func Test_parseLine(t *testing.T) {
 
 	assert.Equal(t, 2, n1)
 	assert.Equal(t, 5, n2)
+}
+
+func similarity(a []int, b []int) int {
+	occurrencesB := make(map[int]int)
+	for _, i := range b {
+		n, ok := occurrencesB[i]
+		if !ok {
+			occurrencesB[i] = 0
+		}
+		occurrencesB[i] = n + 1
+	}
+	var result int
+	for _, i := range a {
+		result += i * occurrencesB[i]
+	}
+	return result
 }
