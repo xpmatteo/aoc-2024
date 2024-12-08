@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type mul struct {
@@ -37,10 +38,20 @@ func atoi(s string) int {
 	return i
 }
 
-func sum(nums []int) int {
-	result := 0
-	for _, num := range nums {
-		result += num
+func skipExcluded(s string) string {
+	result := ""
+	const stop = "don't()"
+	const goo = "do()"
+	for {
+		before, after, found := strings.Cut(s, stop)
+		result += before
+		if !found {
+			return result
+		}
+		before, after, found = strings.Cut(after, goo)
+		if !found {
+			return "NOOOO"
+		}
+		s = after
 	}
-	return result
 }
