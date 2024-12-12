@@ -5,8 +5,61 @@ import (
 	"strings"
 )
 
+type Matrix [][]rune
+
+func (m *Matrix) numRows() int {
+	return len(*m)
+}
+
+func (m *Matrix) numCols() int {
+	return len((*m)[0])
+}
+
+func (m *Matrix) get(r, c int) rune {
+	if m.isValidCoord(r, c) {
+		return (*m)[r][c]
+	}
+	return ' '
+}
+
+func (m *Matrix) isValidCoord(r int, c int) bool {
+	return r >= 0 && c >= 0 && r < m.numRows() && c < m.numCols()
+}
+
+func (m *Matrix) forAll(f func(ch rune, r, c int)) {
+	for r, row := range *m {
+		for c, ch := range row {
+			f(ch, r, c)
+		}
+	}
+}
+
 func SearchXmas(input string) int {
 	return search(input) + search(rotate(input)) + search(diag1(input)) + search(diag1(flipHor(input)))
+}
+
+func SearchCrossMas(input string) int {
+	m, _, _ := toMatrix(input)
+	result := 0
+	m.forAll(func(ch rune, r, c int) {
+		if isCrossMas(m, r, c) {
+			result++
+		}
+	})
+	return result
+}
+
+func isCrossMas(m Matrix, r int, c int) bool {
+	nw := m.get(r-1, c-1)
+	ne := m.get(r-1, c+1)
+	center := m.get(r, c)
+	sw := m.get(r+1, c-1)
+	se := m.get(r+1, c+1)
+	return center == 'A' && isMas(nw, se) && isMas(ne, sw)
+}
+
+func isMas(a rune, b rune) bool {
+	return a == 'M' && b == 'S' || a == 'S' && b == 'M'
 }
 
 func search(input string) int {
@@ -73,7 +126,7 @@ func flipHor(input string) string {
 	return strings.TrimRight(result, "\n")
 }
 
-func toMatrix(input string) (m [][]rune, nr int, nc int) {
+func toMatrix(input string) (m Matrix, nr int, nc int) {
 	lines := strings.Split(input, "\n")
 	nr = len(lines)
 	nc = len(lines[0])

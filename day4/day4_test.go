@@ -109,12 +109,35 @@ func Test_xmasSearch(t *testing.T) {
 		{"X...\n.M..\n..A.\n...S", 1},
 		{sample1, 4},
 		{sample2, 18},
-		{day1.ReadFile("day4.txt"), 18},
+		{day1.ReadFile("day4.txt"), 2642},
 	}
 	for _, test := range tests {
 		name := test.input[:min(20, len(test.input))]
 		t.Run(name, func(t *testing.T) {
 			assert.Equal(t, test.expected, SearchXmas(test.input))
+		})
+	}
+}
+
+func Test_crossMasSearch(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int
+	}{
+		{"aaa", 0},
+		{"S.M\n.A.\nS.S", 0},
+		{"M.M\n.A.\nS.S", 1},
+		{"S.S\n.A.\nM.M", 1},
+		{"S.M\n.A.\nS.M", 1},
+		{"M.S\n.A.\nM.S", 1},
+		{".M.S\n..A.\n.M.S", 1},
+		{sample2, 9},
+		{day1.ReadFile("day4.txt"), 1974},
+	}
+	for _, test := range tests {
+		name := test.input[:min(20, len(test.input))]
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, test.expected, SearchCrossMas(test.input))
 		})
 	}
 }
