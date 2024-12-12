@@ -6,7 +6,7 @@ import (
 )
 
 func SearchXmas(input string) int {
-	return search(input) + search(rotate(input))
+	return search(input) + search(rotate(input)) + search(diag1(input)) + search(diag1(flipHor(input)))
 }
 
 func search(input string) int {
@@ -46,24 +46,42 @@ func rotate(input string) string {
 func diag1(input string) string {
 	m, nr, nc := toMatrix(input)
 	result := ""
-	for diag := range nr + nc - 1 {
-		for col := 0; col < nc; col++ {
-			for row := diag; row >= 0; row-- {
+	maxDiag := nr + nc - 1
+	for diag := range maxDiag {
+		col, row := diag, 0
+		for row < nr {
+			if col >= 0 && row >= 0 && row < nr && col < nc {
 				result += string(m[row][col])
 			}
+			col--
+			row++
 		}
 		result += "\n"
 	}
 	return strings.TrimRight(result, "\n")
 }
 
-func toMatrix(input string) (matrix [][]rune, nr int, nc int) {
+func flipHor(input string) string {
+	m, _, nc := toMatrix(input)
+	result := ""
+	for _, row := range m {
+		for i, _ := range row {
+			result += string(row[nc-i-1])
+		}
+		result += "\n"
+	}
+	return strings.TrimRight(result, "\n")
+}
+
+func toMatrix(input string) (m [][]rune, nr int, nc int) {
 	lines := strings.Split(input, "\n")
-	in := makeMatrix(len(lines), len(lines[0]))
+	nr = len(lines)
+	nc = len(lines[0])
+	m = makeMatrix(nr, nc)
 	for row, line := range lines {
 		for col, r := range []rune(line) {
-			in[row][col] = r
+			m[row][col] = r
 		}
 	}
-	return in, len(in), len(in[0])
+	return m, len(m), len(m[0])
 }

@@ -2,6 +2,7 @@ package day4
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/xpmatteo/aoc-2024/day1"
 	"regexp"
 	"testing"
 )
@@ -64,6 +65,29 @@ func stripWhitespace(s string) string {
 	return re.ReplaceAllString(s, "")
 }
 
+func Test_flip(t *testing.T) {
+	input := "abc\n123"
+	expected := "cba\n321"
+	assert.Equal(t, expected, flipHor(input))
+}
+
+const sample1 = `..X...
+.SAMX.
+.A..A.
+XMAS.S
+.X....`
+
+const sample2 = `MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX`
+
 func Test_xmasSearch(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -77,9 +101,19 @@ func Test_xmasSearch(t *testing.T) {
 		{"XMAS\nXMAS\nXMAS", 3},
 		{".X.\n.M.\n.A.\n.S.", 1},
 		{".S.\n.A.\n.M.\n.X.", 1},
+		// ...X
+		// ..M.
+		// .A..
+		// S...
+		{"...X\n..M.\n.A..\nS...", 1},
+		{"X...\n.M..\n..A.\n...S", 1},
+		{sample1, 4},
+		{sample2, 18},
+		{day1.ReadFile("day4.txt"), 18},
 	}
 	for _, test := range tests {
-		t.Run(test.input, func(t *testing.T) {
+		name := test.input[:min(20, len(test.input))]
+		t.Run(name, func(t *testing.T) {
 			assert.Equal(t, test.expected, SearchXmas(test.input))
 		})
 	}
