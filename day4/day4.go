@@ -70,8 +70,8 @@ func search(input string) int {
 	return len(allFwd) + len(allBwd)
 }
 
-func makeMatrix(rows, cols int) [][]rune {
-	a := make([][]rune, rows)
+func makeMatrix(rows, cols int) Matrix {
+	a := make(Matrix, rows)
 	for i := range a {
 		a[i] = make([]rune, cols)
 	}
