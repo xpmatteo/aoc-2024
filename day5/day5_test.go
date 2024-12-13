@@ -93,3 +93,42 @@ func Test_part1(t *testing.T) {
 		})
 	}
 }
+
+func Test_part2(t *testing.T) {
+	tests := []struct {
+		name     string
+		rules    []Rule
+		updates  []Update
+		expected int
+	}{
+		{
+			name:     "updates all correct",
+			rules:    []Rule{{2, 3}},
+			updates:  []Update{{1, 2, 3}},
+			expected: 0,
+		},
+		{
+			name:     "fix one update",
+			rules:    []Rule{{2, 3}},
+			updates:  []Update{{1, 3, 2}},
+			expected: 2,
+		},
+		{
+			name:     "sample",
+			rules:    parseRules(sampleRules),
+			updates:  parseUpdates(sampleUpdates),
+			expected: 123,
+		},
+		{
+			name:     "real",
+			rules:    parseRules(day1.ReadFile("day5-rules.txt")),
+			updates:  parseUpdates(day1.ReadFile("day5-updates.txt")),
+			expected: 4462,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expected, fixAndSumInvalidUpdates(test.rules, test.updates))
+		})
+	}
+}

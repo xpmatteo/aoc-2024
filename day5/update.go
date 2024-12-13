@@ -23,3 +23,15 @@ func (u Update) MiddleValue() Page {
 	middleIndex := len(u) / 2
 	return u[middleIndex]
 }
+
+func (u Update) Sort(rules []Rule) {
+	slices.SortFunc(u, func(a Page, b Page) int {
+		if slices.Index(rules, Rule{b, a}) >= 0 {
+			return 1
+		}
+		if slices.Index(rules, Rule{a, b}) >= 0 {
+			return -1
+		}
+		return 0
+	})
+}

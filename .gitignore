@@ -29,3 +29,6 @@ go.work.sum
 
 # Puzzle inputs
 *.txt
+
+# Mac
+.DS_Store

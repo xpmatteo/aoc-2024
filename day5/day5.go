@@ -56,3 +56,14 @@ func sumValidUpdates(rules []Rule, updates []Update) int {
 	}
 	return result
 }
+
+func fixAndSumInvalidUpdates(rules []Rule, updates []Update) int {
+	result := 0
+	for _, update := range updates {
+		if !update.ObeysAll(rules) {
+			update.Sort(rules)
+			result += int(update.MiddleValue())
+		}
+	}
+	return result
+}
