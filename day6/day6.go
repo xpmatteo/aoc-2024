@@ -24,9 +24,14 @@ func findInitialPosition(m Map) (r int, c int, dir int32) {
 	return
 }
 
-func markPredictedRoute(m Map) {
+func markPredictedRoute(m Map) (loopDetected bool) {
 	r, c, curDir := findInitialPosition(m)
+	log := NewVisitLog()
 	for r >= 0 && c >= 0 && r < m.Rows() && c < m.Cols() {
+		if log.DejaVu(r, c, curDir) {
+			return true
+		}
+		log.Log(r, c, curDir)
 		if m.IsFacingObstacle(r, c, curDir) {
 			curDir = m.Turn90DegreesRight(curDir)
 		}
@@ -44,4 +49,5 @@ func markPredictedRoute(m Map) {
 			panic("heading in unknown direction: " + string(curDir))
 		}
 	}
+	return false
 }

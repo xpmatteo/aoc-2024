@@ -151,3 +151,40 @@ func Test_part1(t *testing.T) {
 		})
 	}
 }
+
+func Test_detectLoop(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    Map
+		expected bool
+	}{
+		{
+			name: "no loop",
+			input: Map{
+				"...",
+				"...",
+				".^.",
+				"...",
+			},
+			expected: false,
+		},
+		{
+			name: "loop",
+			input: Map{
+				".#........",
+				".........#",
+				"..........",
+				"#.........",
+				"........#.",
+				".^........",
+			},
+			expected: true,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			loopDetected := markPredictedRoute(test.input)
+			assert.Equal(t, test.expected, loopDetected)
+		})
+	}
+}
