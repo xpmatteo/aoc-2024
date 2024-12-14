@@ -1,15 +1,21 @@
 package day6
 
+import "strings"
+
 const (
-	visited       = 'X'
-	guardianUp    = '^'
-	guardianRight = '>'
-	guardianDown  = 'v'
-	guardianLeft  = '<'
-	obstacle      = '#'
+	Visited        = 'X'
+	DirectionUp    = '^'
+	DirectionRight = '>'
+	DirectionDown  = 'v'
+	DirectionLeft  = '<'
+	Obstacle       = '#'
 )
 
 type Map []string
+
+func ParseMap(s string) Map {
+	return strings.Split(s, "\n")
+}
 
 func (m Map) Set(r int, c int, value int32) {
 	old := m[r]
@@ -33,24 +39,28 @@ func (m Map) Rows() int {
 }
 
 func (m Map) facingObstacle(r int, c int, dir int32) bool {
-	return dir == guardianUp && r > 0 && m[r-1][c] == obstacle ||
-		dir == guardianLeft && c > 0 && m[r][c-1] == obstacle ||
-		dir == guardianRight && c+1 < m.Cols() && m[r][c+1] == obstacle ||
-		dir == guardianDown && r+1 < m.Rows() && m[r+1][c] == obstacle
+	return dir == DirectionUp && r > 0 && m[r-1][c] == Obstacle ||
+		dir == DirectionLeft && c > 0 && m[r][c-1] == Obstacle ||
+		dir == DirectionRight && c+1 < m.Cols() && m[r][c+1] == Obstacle ||
+		dir == DirectionDown && r+1 < m.Rows() && m[r+1][c] == Obstacle
 
 }
 
-func (m Map) TurnGuardian(dir int32) int32 {
+func (m Map) Turn90Degrees(dir int32) int32 {
 	switch dir {
-	case guardianUp:
-		return guardianRight
-	case guardianRight:
-		return guardianDown
-	case guardianDown:
-		return guardianLeft
-	case guardianLeft:
-		return guardianUp
+	case DirectionUp:
+		return DirectionRight
+	case DirectionRight:
+		return DirectionDown
+	case DirectionDown:
+		return DirectionLeft
+	case DirectionLeft:
+		return DirectionUp
 	default:
 		panic("don't know where to turn! " + string(dir))
 	}
+}
+
+func (m Map) String() string {
+	return strings.Join(m, "\n")
 }

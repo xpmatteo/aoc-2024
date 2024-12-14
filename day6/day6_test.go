@@ -3,7 +3,6 @@ package day6
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/xpmatteo/aoc-2024/day1"
-	"strings"
 	"testing"
 )
 
@@ -38,13 +37,13 @@ func Test_part1(t *testing.T) {
 	}{
 		{
 			name: "move up",
-			input: []string{
+			input: Map{
 				"...",
 				"...",
 				".^.",
 				"...",
 			},
-			expected: []string{
+			expected: Map{
 				".X.",
 				".X.",
 				".X.",
@@ -54,12 +53,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "move right",
-			input: []string{
+			input: Map{
 				"....",
 				">...",
 				"....",
 			},
-			expected: []string{
+			expected: Map{
 				"....",
 				"XXXX",
 				"....",
@@ -68,12 +67,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "move down",
-			input: []string{
+			input: Map{
 				"....",
 				".v..",
 				"....",
 			},
-			expected: []string{
+			expected: Map{
 				"....",
 				".X..",
 				".X..",
@@ -82,12 +81,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "up then right",
-			input: []string{
+			input: Map{
 				".#..",
 				"....",
 				".^..",
 			},
-			expected: []string{
+			expected: Map{
 				".#..",
 				".XXX",
 				".X..",
@@ -96,13 +95,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "u turn",
-			input: []string{
+			input: Map{
 				".#....",
 				".....#",
 				"......",
 				".^....",
 			},
-			expected: []string{
+			expected: Map{
 				".#....",
 				".XXXX#",
 				".X..X.",
@@ -112,7 +111,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "round",
-			input: []string{
+			input: Map{
 				".#........",
 				".........#",
 				"..........",
@@ -120,7 +119,7 @@ func Test_part1(t *testing.T) {
 				"........#.",
 				".^........",
 			},
-			expected: []string{
+			expected: Map{
 				".#...X....",
 				".XXXXXXXX#",
 				".X...X..X.",
@@ -132,13 +131,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name:          "sample",
-			input:         parse(sample),
-			expected:      parse(sampleSolved),
+			input:         ParseMap(sample),
+			expected:      ParseMap(sampleSolved),
 			expectedCount: 41,
 		},
 		{
 			name:          "real",
-			input:         parse(day1.ReadFile("day6.txt")),
+			input:         ParseMap(day1.ReadFile("day6.txt")),
 			expectedCount: 5153,
 		},
 	}
@@ -147,18 +146,10 @@ func Test_part1(t *testing.T) {
 			markPredictedRoute(test.input)
 			assert.Equal(t, test.expectedCount, countVisited(test.input))
 			if len(test.expected) > 0 {
-				assert.Equal(t, join(test.expected), join(test.input))
+				assert.Equal(t, test.expected.String(), test.input.String())
 			}
 		})
 	}
-}
-
-func parse(s string) Map {
-	return strings.Split(s, "\n")
-}
-
-func join(m Map) string {
-	return strings.Join(m, "\n")
 }
 
 func Test_set(t *testing.T) {
