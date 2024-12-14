@@ -1,6 +1,6 @@
 module github.com/xpmatteo/aoc-2024
 
-go 1.22.2
+go 1.23.3
 
 require github.com/stretchr/testify v1.10.0
 

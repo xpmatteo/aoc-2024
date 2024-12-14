@@ -14,7 +14,8 @@ const (
 type Map []string
 
 func ParseMap(s string) Map {
-	return strings.Split(s, "\n")
+	trimmed := strings.Trim(s, "\n")
+	return strings.Split(trimmed, "\n")
 }
 
 func (m Map) Set(r int, c int, value int32) {

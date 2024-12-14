@@ -188,3 +188,49 @@ func Test_detectLoop(t *testing.T) {
 		})
 	}
 }
+
+func Test_part2(t *testing.T) {
+	tests := []struct {
+		name          string
+		input         Map
+		expectedCount int
+	}{
+		{
+			name: "no loops possible",
+			input: Map{
+				"...",
+				"...",
+				".^.",
+				"...",
+			},
+			expectedCount: 0,
+		},
+		{
+			name: "one loop possible",
+			input: Map{
+				".#........",
+				".........#",
+				"..........",
+				"....#.....",
+				"........#.",
+				".^........",
+			},
+			expectedCount: 1,
+		},
+		{
+			name:          "sample",
+			input:         ParseMap(sample),
+			expectedCount: 6,
+		},
+		{
+			name:          "real",
+			input:         ParseMap(day1.ReadFile("day6.txt")),
+			expectedCount: 1708,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expectedCount, countPossibleLoops(test.input))
+		})
+	}
+}

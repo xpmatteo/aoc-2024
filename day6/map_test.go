@@ -26,3 +26,7 @@ func Test_clones_can_be_modified_independently(t *testing.T) {
 
 	assert.Equal(t, Map([]string{"aaa", "bbb"}), m, "original is unchanged")
 }
+
+func Test_parse_does_not_include_empty_rows(t *testing.T) {
+	assert.Equal(t, 2, ParseMap("aaa\nbbb\n").Rows())
+}

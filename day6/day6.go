@@ -51,3 +51,20 @@ func markPredictedRoute(m Map) (loopDetected bool) {
 	}
 	return false
 }
+
+func countPossibleLoops(input Map) int {
+	guardRow, guardCol, _ := findInitialPosition(input)
+	count := 0
+	input.forEach(func(r, c int, value int32) {
+		if r == guardRow && c == guardCol {
+			return
+		}
+		cl := input.Clone()
+		cl.Set(r, c, Obstacle)
+		loopDetected := markPredictedRoute(cl)
+		if loopDetected {
+			count++
+		}
+	})
+	return count
+}
