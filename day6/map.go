@@ -63,3 +63,9 @@ func (m Map) Turn90DegreesRight(dir int32) int32 {
 func (m Map) String() string {
 	return strings.Join(m, "\n")
 }
+
+func (m Map) Clone() Map {
+	clone := make(Map, len(m))
+	_ = copy(clone, m)
+	return clone
+}
