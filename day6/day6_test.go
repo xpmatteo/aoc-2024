@@ -180,6 +180,17 @@ func Test_detectLoop(t *testing.T) {
 			},
 			expected: true,
 		},
+		{
+			name: "tight loop",
+			input: Map{
+				//1234
+				".#...", // 0
+				"#.#..", // 1
+				"#..<.", // 2
+				".#...", // 3
+			},
+			expected: true,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

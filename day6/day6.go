@@ -56,18 +56,19 @@ func detectLoop(m Map) (loopDetected bool) {
 		log.Log(r, c, curDir)
 		if m.IsFacingObstacle(r, c, curDir) {
 			curDir = m.Turn90DegreesRight(curDir)
-		}
-		switch curDir {
-		case DirectionUp:
-			r--
-		case DirectionRight:
-			c++
-		case DirectionDown:
-			r++
-		case DirectionLeft:
-			c--
-		default:
-			panic("heading in unknown direction: " + string(curDir))
+		} else {
+			switch curDir {
+			case DirectionUp:
+				r--
+			case DirectionRight:
+				c++
+			case DirectionDown:
+				r++
+			case DirectionLeft:
+				c--
+			default:
+				panic("heading in unknown direction: " + string(curDir))
+			}
 		}
 	}
 	return false
