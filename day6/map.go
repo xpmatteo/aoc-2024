@@ -38,15 +38,14 @@ func (m Map) Rows() int {
 	return len(m)
 }
 
-func (m Map) facingObstacle(r int, c int, dir int32) bool {
+func (m Map) IsFacingObstacle(r int, c int, dir int32) bool {
 	return dir == DirectionUp && r > 0 && m[r-1][c] == Obstacle ||
 		dir == DirectionLeft && c > 0 && m[r][c-1] == Obstacle ||
 		dir == DirectionRight && c+1 < m.Cols() && m[r][c+1] == Obstacle ||
 		dir == DirectionDown && r+1 < m.Rows() && m[r+1][c] == Obstacle
-
 }
 
-func (m Map) Turn90Degrees(dir int32) int32 {
+func (m Map) Turn90DegreesRight(dir int32) int32 {
 	switch dir {
 	case DirectionUp:
 		return DirectionRight

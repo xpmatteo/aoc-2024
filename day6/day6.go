@@ -27,8 +27,8 @@ func findInitialPosition(m Map) (r int, c int, dir int32) {
 func markPredictedRoute(m Map) {
 	r, c, curDir := findInitialPosition(m)
 	for r >= 0 && c >= 0 && r < m.Rows() && c < m.Cols() {
-		if m.facingObstacle(r, c, curDir) {
-			curDir = m.Turn90Degrees(curDir)
+		if m.IsFacingObstacle(r, c, curDir) {
+			curDir = m.Turn90DegreesRight(curDir)
 		}
 		m.Set(r, c, Visited)
 		switch curDir {
