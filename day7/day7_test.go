@@ -51,7 +51,7 @@ func Test_equation(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.shouldBeSolvable, test.input.IsSolvable())
+			assert.Equal(t, test.shouldBeSolvable, test.input.IsSolvable(Operators2))
 		})
 	}
 }
@@ -80,7 +80,36 @@ func Test_part1(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expected, sumOfSolvableEquations(test.eqns))
+			assert.Equal(t, test.expected, sumOfSolvableEquations(test.eqns, Operators2))
+		})
+	}
+}
+
+func Test_part2(t *testing.T) {
+	tests := []struct {
+		name     string
+		eqns     []Equation
+		expected int
+	}{
+		{
+			name:     "one solvable eq",
+			eqns:     []Equation{parseEquation("223: 2 2 3")},
+			expected: 223,
+		},
+		{
+			name:     "sample",
+			eqns:     parseManyEquations(sample),
+			expected: 11387,
+		},
+		{
+			name:     "real",
+			eqns:     parseManyEquations(day1.ReadFile("day7.txt")),
+			expected: 333027885676693,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expected, sumOfSolvableEquations(test.eqns, Operators3))
 		})
 	}
 }
@@ -161,7 +190,7 @@ func Test_genCombination(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expected, genCombination(test.len, test.index))
+			assert.Equal(t, test.expected, genCombination(test.len, test.index, Operators2))
 		})
 	}
 }

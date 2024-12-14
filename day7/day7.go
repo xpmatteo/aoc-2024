@@ -2,6 +2,7 @@ package day7
 
 import (
 	"github.com/xpmatteo/aoc-2024/day1"
+	"strconv"
 	"strings"
 )
 
@@ -13,15 +14,19 @@ func (o Operator) Evaluate(a int, b int) int {
 		return a + b
 	case OpTimes:
 		return a * b
+	case OpConcat:
+		return day1.Atoi(strconv.Itoa(a) + strconv.Itoa(b))
 	default:
-		panic("bad operand: " + o)
+		panic("bad operator: " + o)
 	}
 }
 
-const OpPlus = Operator("0")
-const OpTimes = Operator("1")
+const OpPlus = Operator("+")
+const OpTimes = Operator("*")
+const OpConcat = Operator("||")
 
-var Operators = []Operator{OpPlus, OpTimes}
+var Operators2 = []Operator{OpPlus, OpTimes}
+var Operators3 = []Operator{OpPlus, OpTimes, OpConcat}
 
 type Equation struct {
 	result   int
@@ -35,11 +40,11 @@ func (e Equation) IsSolvedBy(ops []Operator) bool {
 	return e.Evaluate(ops) == e.result
 }
 
-func (e Equation) IsSolvable() bool {
+func (e Equation) IsSolvable(availableOperators []Operator) bool {
 	numOperators := len(e.operands) - 1
-	numOpCombinations := power(len(Operators), numOperators)
+	numOpCombinations := power(len(availableOperators), numOperators)
 	for i := range numOpCombinations {
-		ops := genCombination(numOperators, i)
+		ops := genCombination(numOperators, i, availableOperators)
 		if e.IsSolvedBy(ops) {
 			return true
 		}
@@ -47,12 +52,12 @@ func (e Equation) IsSolvable() bool {
 	return false
 }
 
-func genCombination(length int, index int) []Operator {
+func genCombination(length int, index int, availableOperators []Operator) []Operator {
 	result := make([]Operator, length)
 	for i := range length {
-		op := index % len(Operators)
-		result[i] = Operators[op]
-		index /= len(Operators)
+		op := index % len(availableOperators)
+		result[i] = availableOperators[op]
+		index /= len(availableOperators)
 	}
 	return result
 }
@@ -73,10 +78,10 @@ func power(n int, exp int) int {
 	return result
 }
 
-func sumOfSolvableEquations(eqns []Equation) int {
+func sumOfSolvableEquations(eqns []Equation, availableOperators []Operator) int {
 	result := 0
 	for _, eqn := range eqns {
-		if eqn.IsSolvable() {
+		if eqn.IsSolvable(availableOperators) {
 			result += eqn.result
 		}
 	}
