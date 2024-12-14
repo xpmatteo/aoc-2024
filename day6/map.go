@@ -70,3 +70,7 @@ func (m Map) Clone() Map {
 	_ = copy(clone, m)
 	return clone
 }
+
+func (m Map) Get(r int, c int) int32 {
+	return int32(m[r][c])
+}

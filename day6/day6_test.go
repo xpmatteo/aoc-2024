@@ -183,7 +183,7 @@ func Test_detectLoop(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			loopDetected := markPredictedRoute(test.input)
+			loopDetected := detectLoop(test.input)
 			assert.Equal(t, test.expected, loopDetected)
 		})
 	}
@@ -225,7 +225,7 @@ func Test_part2(t *testing.T) {
 		{
 			name:          "real",
 			input:         ParseMap(day1.ReadFile("day6.txt")),
-			expectedCount: 1708,
+			expectedCount: 1709,
 		},
 	}
 	for _, test := range tests {

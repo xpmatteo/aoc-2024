@@ -24,7 +24,29 @@ func findInitialPosition(m Map) (r int, c int, dir int32) {
 	return
 }
 
-func markPredictedRoute(m Map) (loopDetected bool) {
+func markPredictedRoute(m Map) {
+	r, c, curDir := findInitialPosition(m)
+	for r >= 0 && c >= 0 && r < m.Rows() && c < m.Cols() {
+		if m.IsFacingObstacle(r, c, curDir) {
+			curDir = m.Turn90DegreesRight(curDir)
+		}
+		m.Set(r, c, Visited)
+		switch curDir {
+		case DirectionUp:
+			r--
+		case DirectionRight:
+			c++
+		case DirectionDown:
+			r++
+		case DirectionLeft:
+			c--
+		default:
+			panic("heading in unknown direction: " + string(curDir))
+		}
+	}
+}
+
+func detectLoop(m Map) (loopDetected bool) {
 	r, c, curDir := findInitialPosition(m)
 	log := NewVisitLog()
 	for r >= 0 && c >= 0 && r < m.Rows() && c < m.Cols() {
@@ -35,7 +57,6 @@ func markPredictedRoute(m Map) (loopDetected bool) {
 		if m.IsFacingObstacle(r, c, curDir) {
 			curDir = m.Turn90DegreesRight(curDir)
 		}
-		m.Set(r, c, Visited)
 		switch curDir {
 		case DirectionUp:
 			r--
@@ -59,12 +80,13 @@ func countPossibleLoops(input Map) int {
 		if r == guardRow && c == guardCol {
 			return
 		}
-		cl := input.Clone()
-		cl.Set(r, c, Obstacle)
-		loopDetected := markPredictedRoute(cl)
+		whatWasThere := input.Get(r, c)
+		input.Set(r, c, Obstacle)
+		loopDetected := detectLoop(input)
 		if loopDetected {
 			count++
 		}
+		input.Set(r, c, whatWasThere)
 	})
 	return count
 }
