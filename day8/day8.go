@@ -7,16 +7,6 @@ import (
 
 const Antinode = int32('#')
 
-func countAntiNodes(m day6.Map) int {
-	var result int
-	m.ForEach(func(r int, c int, value int32) {
-		if value == Antinode {
-			result++
-		}
-	})
-	return result
-}
-
 func plotAntinodes(input day6.Map) day6.Map {
 	result := input.Clone()
 	for _, frequency := range "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890" {
@@ -28,6 +18,27 @@ func plotAntinodes(input day6.Map) day6.Map {
 		})
 	}
 	return result
+}
+
+func plotAntinodesPart2(input day6.Map) day6.Map {
+	result := input.Clone()
+	for _, frequency := range "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890" {
+		coords := findCoordinates(input, frequency)
+		forAllPairs(coords, func(c0, c1 mapping.Coord) {
+			delta := c1.Minus(c0)
+			applyDelta(result, c0, delta)
+		})
+	}
+	return result
+}
+
+func applyDelta(m day6.Map, startPoint mapping.Coord, delta mapping.Coord) {
+	for p := startPoint; m.IsValid(p); p = p.Minus(delta) {
+		m.SetCoord(p, Antinode)
+	}
+	for p := startPoint; m.IsValid(p); p = p.Plus(delta) {
+		m.SetCoord(p, Antinode)
+	}
 }
 
 func forAllPairs(c []mapping.Coord, f func(c0 mapping.Coord, c1 mapping.Coord)) {
@@ -43,6 +54,16 @@ func findCoordinates(m day6.Map, target int32) []mapping.Coord {
 	m.ForEach(func(r int, c int, value int32) {
 		if value == target {
 			result = append(result, mapping.Coord{r, c})
+		}
+	})
+	return result
+}
+
+func countAntiNodes(m day6.Map) int {
+	var result int
+	m.ForEach(func(r int, c int, value int32) {
+		if value == Antinode {
+			result++
 		}
 	})
 	return result

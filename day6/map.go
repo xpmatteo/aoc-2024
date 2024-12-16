@@ -26,12 +26,18 @@ func (m Map) Set(r int, c int, value int32) {
 	m[r] = old[:c] + string(value) + old[c+1:]
 }
 
-func (m Map) ForEach(f func(r int, c int, value int32)) {
-	for r, row := range m {
-		for c, value := range row {
-			f(r, c, value)
-		}
+func (m Map) SetSafe(coord mapping.Coord, value int32) {
+	if m.IsValid(coord) {
+		m.Set(coord.Row, coord.Col, value)
 	}
+}
+
+func (m Map) SetCoord(c mapping.Coord, val int32) {
+	m.Set(c.Row, c.Col, val)
+}
+
+func (m Map) Get(r int, c int) int32 {
+	return int32(m[r][c])
 }
 
 func (m Map) Cols() int {
@@ -40,6 +46,14 @@ func (m Map) Cols() int {
 
 func (m Map) Rows() int {
 	return len(m)
+}
+
+func (m Map) ForEach(f func(r int, c int, value int32)) {
+	for r, row := range m {
+		for c, value := range row {
+			f(r, c, value)
+		}
+	}
 }
 
 func (m Map) IsFacingObstacle(r int, c int, dir int32) bool {
@@ -72,16 +86,6 @@ func (m Map) Clone() Map {
 	clone := make(Map, len(m))
 	_ = copy(clone, m)
 	return clone
-}
-
-func (m Map) Get(r int, c int) int32 {
-	return int32(m[r][c])
-}
-
-func (m Map) SetSafe(coord mapping.Coord, value int32) {
-	if m.IsValid(coord) {
-		m.Set(coord.Row, coord.Col, value)
-	}
 }
 
 func (m Map) IsValid(coord mapping.Coord) bool {

@@ -170,3 +170,67 @@ func Test_part1(t *testing.T) {
 		})
 	}
 }
+
+const sample2 = `
+T.........
+...T......
+.T........
+..........
+..........
+..........
+..........
+..........
+..........
+..........`
+
+const sample2Solved = `
+#....#....
+...#......
+.#....#...
+.........#
+..#.......
+..........
+...#......
+..........
+....#.....
+..........`
+
+func Test_part2(t *testing.T) {
+	tests := []struct {
+		name          string
+		input         day6.Map
+		expected      day6.Map
+		expectedCount int
+	}{
+		{
+			name: "simple",
+			input: day6.Map{
+				".....a...a........",
+			},
+			expected: day6.Map{
+				".#...#...#...#...#",
+			},
+			expectedCount: 5,
+		},
+		{
+			name:          "sample2",
+			input:         day6.ParseMap(sample2),
+			expected:      day6.ParseMap(sample2Solved),
+			expectedCount: 9,
+		},
+		{
+			name:          "real",
+			input:         day6.ParseMap(day1.ReadFile("day8.txt")),
+			expectedCount: 9,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			m := plotAntinodesPart2(test.input)
+			assert.Equal(t, test.expectedCount, countAntiNodes(m))
+			if test.expected != nil {
+				assert.Equal(t, test.expected.String(), m.String())
+			}
+		})
+	}
+}
