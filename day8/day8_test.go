@@ -3,7 +3,7 @@ package day8
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/xpmatteo/aoc-2024/day1"
-	"github.com/xpmatteo/aoc-2024/day6"
+	"github.com/xpmatteo/aoc-2024/mapping"
 	"testing"
 )
 
@@ -36,18 +36,18 @@ const sampleSolved = `......#....#
 func Test_part1(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         day6.Map
-		expected      day6.Map
+		input         mapping.Map
+		expected      mapping.Map
 		expectedCount int
 	}{
 		{
 			name: "1 antenna",
-			input: day6.Map{
+			input: mapping.Map{
 				"..........",
 				"........a.",
 				"..........",
 			},
-			expected: day6.Map{
+			expected: mapping.Map{
 				"..........",
 				"........a.",
 				"..........",
@@ -56,7 +56,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "2 antennas",
-			input: day6.Map{
+			input: mapping.Map{
 				"..........",
 				"..........",
 				"..........",
@@ -68,7 +68,7 @@ func Test_part1(t *testing.T) {
 				"..........",
 				"..........",
 			},
-			expected: day6.Map{
+			expected: mapping.Map{
 				"..........",
 				"...#......",
 				"..........",
@@ -84,17 +84,17 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "antinode falling outside",
-			input: day6.Map{
+			input: mapping.Map{
 				".a......a.",
 			},
-			expected: day6.Map{
+			expected: mapping.Map{
 				".a......a.",
 			},
 			expectedCount: 0,
 		},
 		{
 			name: "3 nodes",
-			input: day6.Map{
+			input: mapping.Map{
 				"..........",
 				"..........",
 				"..........",
@@ -106,7 +106,7 @@ func Test_part1(t *testing.T) {
 				"..........",
 				"..........",
 			},
-			expected: day6.Map{
+			expected: mapping.Map{
 				"..........",
 				"...#......",
 				"#.........",
@@ -122,7 +122,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "different frequencies",
-			input: day6.Map{
+			input: mapping.Map{
 				"..........",
 				"..........",
 				"..........",
@@ -134,7 +134,7 @@ func Test_part1(t *testing.T) {
 				"..........",
 				"..........",
 			},
-			expected: day6.Map{
+			expected: mapping.Map{
 				"..........",
 				"...#......",
 				"#.........",
@@ -150,13 +150,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name:          "sample",
-			input:         day6.ParseMap(sample),
-			expected:      day6.ParseMap(sampleSolved),
+			input:         mapping.ParseMap(sample),
+			expected:      mapping.ParseMap(sampleSolved),
 			expectedCount: 14,
 		},
 		{
 			name:          "real",
-			input:         day6.ParseMap(day1.ReadFile("day8.txt")),
+			input:         mapping.ParseMap(day1.ReadFile("day8.txt")),
 			expectedCount: 390,
 		},
 	}
@@ -198,30 +198,30 @@ const sample2Solved = `
 func Test_part2(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         day6.Map
-		expected      day6.Map
+		input         mapping.Map
+		expected      mapping.Map
 		expectedCount int
 	}{
 		{
 			name: "simple",
-			input: day6.Map{
+			input: mapping.Map{
 				".....a...a........",
 			},
-			expected: day6.Map{
+			expected: mapping.Map{
 				".#...#...#...#...#",
 			},
 			expectedCount: 5,
 		},
 		{
 			name:          "sample2",
-			input:         day6.ParseMap(sample2),
-			expected:      day6.ParseMap(sample2Solved),
+			input:         mapping.ParseMap(sample2),
+			expected:      mapping.ParseMap(sample2Solved),
 			expectedCount: 9,
 		},
 		{
 			name:          "real",
-			input:         day6.ParseMap(day1.ReadFile("day8.txt")),
-			expectedCount: 9,
+			input:         mapping.ParseMap(day1.ReadFile("day8.txt")),
+			expectedCount: 1246,
 		},
 	}
 	for _, test := range tests {

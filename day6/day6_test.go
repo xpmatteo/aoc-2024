@@ -3,6 +3,7 @@ package day6
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/xpmatteo/aoc-2024/day1"
+	"github.com/xpmatteo/aoc-2024/mapping"
 	"testing"
 )
 
@@ -31,19 +32,19 @@ const sampleSolved = `....#.....
 func Test_part1(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         Map
-		expected      Map
+		input         mapping.Map
+		expected      mapping.Map
 		expectedCount int
 	}{
 		{
 			name: "move up",
-			input: Map{
+			input: mapping.Map{
 				"...",
 				"...",
 				".^.",
 				"...",
 			},
-			expected: Map{
+			expected: mapping.Map{
 				".X.",
 				".X.",
 				".X.",
@@ -53,12 +54,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "move right",
-			input: Map{
+			input: mapping.Map{
 				"....",
 				">...",
 				"....",
 			},
-			expected: Map{
+			expected: mapping.Map{
 				"....",
 				"XXXX",
 				"....",
@@ -67,12 +68,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "move down",
-			input: Map{
+			input: mapping.Map{
 				"....",
 				".v..",
 				"....",
 			},
-			expected: Map{
+			expected: mapping.Map{
 				"....",
 				".X..",
 				".X..",
@@ -81,12 +82,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "up then right",
-			input: Map{
+			input: mapping.Map{
 				".#..",
 				"....",
 				".^..",
 			},
-			expected: Map{
+			expected: mapping.Map{
 				".#..",
 				".XXX",
 				".X..",
@@ -95,13 +96,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "u turn",
-			input: Map{
+			input: mapping.Map{
 				".#....",
 				".....#",
 				"......",
 				".^....",
 			},
-			expected: Map{
+			expected: mapping.Map{
 				".#....",
 				".XXXX#",
 				".X..X.",
@@ -111,7 +112,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "round",
-			input: Map{
+			input: mapping.Map{
 				".#........",
 				".........#",
 				"..........",
@@ -119,7 +120,7 @@ func Test_part1(t *testing.T) {
 				"........#.",
 				".^........",
 			},
-			expected: Map{
+			expected: mapping.Map{
 				".#...X....",
 				".XXXXXXXX#",
 				".X...X..X.",
@@ -131,13 +132,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name:          "sample",
-			input:         ParseMap(sample),
-			expected:      ParseMap(sampleSolved),
+			input:         mapping.ParseMap(sample),
+			expected:      mapping.ParseMap(sampleSolved),
 			expectedCount: 41,
 		},
 		{
 			name:          "real",
-			input:         ParseMap(day1.ReadFile("day6.txt")),
+			input:         mapping.ParseMap(day1.ReadFile("day6.txt")),
 			expectedCount: 5153,
 		},
 	}
@@ -155,12 +156,12 @@ func Test_part1(t *testing.T) {
 func Test_detectLoop(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    Map
+		input    mapping.Map
 		expected bool
 	}{
 		{
 			name: "no loop",
-			input: Map{
+			input: mapping.Map{
 				"...",
 				"...",
 				".^.",
@@ -170,7 +171,7 @@ func Test_detectLoop(t *testing.T) {
 		},
 		{
 			name: "loop",
-			input: Map{
+			input: mapping.Map{
 				".#........",
 				".........#",
 				"..........",
@@ -182,7 +183,7 @@ func Test_detectLoop(t *testing.T) {
 		},
 		{
 			name: "tight loop",
-			input: Map{
+			input: mapping.Map{
 				//1234
 				".#...", // 0
 				"#.#..", // 1
@@ -203,12 +204,12 @@ func Test_detectLoop(t *testing.T) {
 func Test_part2(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         Map
+		input         mapping.Map
 		expectedCount int
 	}{
 		{
 			name: "no loops possible",
-			input: Map{
+			input: mapping.Map{
 				"...",
 				"...",
 				".^.",
@@ -218,7 +219,7 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name: "one loop possible",
-			input: Map{
+			input: mapping.Map{
 				".#........",
 				".........#",
 				"..........",
@@ -230,13 +231,13 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name:          "sample",
-			input:         ParseMap(sample),
+			input:         mapping.ParseMap(sample),
 			expectedCount: 6,
 		},
 		{
 			name:          "real",
-			input:         ParseMap(day1.ReadFile("day6.txt")),
-			expectedCount: 1709,
+			input:         mapping.ParseMap(day1.ReadFile("day6.txt")),
+			expectedCount: 1711,
 		},
 	}
 	for _, test := range tests {

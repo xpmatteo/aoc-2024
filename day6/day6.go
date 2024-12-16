@@ -1,8 +1,20 @@
 package day6
 
-import "slices"
+import (
+	"github.com/xpmatteo/aoc-2024/mapping"
+	"slices"
+)
 
-func countVisited(m Map) int {
+const (
+	Visited        = 'X'
+	DirectionUp    = '^'
+	DirectionRight = '>'
+	DirectionDown  = 'v'
+	DirectionLeft  = '<'
+	Obstacle       = '#'
+)
+
+func countVisited(m mapping.Map) int {
 	count := 0
 	m.ForEach(func(r int, c int, value int32) {
 		if value == Visited {
@@ -12,7 +24,7 @@ func countVisited(m Map) int {
 	return count
 }
 
-func findInitialPosition(m Map) (r int, c int, dir int32) {
+func findInitialPosition(m mapping.Map) (r int, c int, dir int32) {
 	values := []int32{DirectionUp, DirectionRight, DirectionDown, DirectionLeft}
 	m.ForEach(func(rr int, cc int, vv int32) {
 		if slices.Index(values, vv) >= 0 {
@@ -24,11 +36,11 @@ func findInitialPosition(m Map) (r int, c int, dir int32) {
 	return
 }
 
-func markPredictedRoute(m Map) {
+func markPredictedRoute(m mapping.Map) {
 	r, c, curDir := findInitialPosition(m)
 	for r >= 0 && c >= 0 && r < m.Rows() && c < m.Cols() {
-		if m.IsFacingObstacle(r, c, curDir) {
-			curDir = m.Turn90DegreesRight(curDir)
+		if isFacingObstacle(m, r, c, curDir) {
+			curDir = Turn90DegreesRight(curDir)
 		}
 		m.Set(r, c, Visited)
 		switch curDir {
@@ -46,7 +58,7 @@ func markPredictedRoute(m Map) {
 	}
 }
 
-func detectLoop(m Map) (loopDetected bool) {
+func detectLoop(m mapping.Map) (loopDetected bool) {
 	r, c, curDir := findInitialPosition(m)
 	log := NewVisitLog()
 	for r >= 0 && c >= 0 && r < m.Rows() && c < m.Cols() {
@@ -54,8 +66,8 @@ func detectLoop(m Map) (loopDetected bool) {
 			return true
 		}
 		log.Log(r, c, curDir)
-		if m.IsFacingObstacle(r, c, curDir) {
-			curDir = m.Turn90DegreesRight(curDir)
+		if isFacingObstacle(m, r, c, curDir) {
+			curDir = Turn90DegreesRight(curDir)
 		} else {
 			switch curDir {
 			case DirectionUp:
@@ -74,7 +86,7 @@ func detectLoop(m Map) (loopDetected bool) {
 	return false
 }
 
-func countPossibleLoops(input Map) int {
+func countPossibleLoops(input mapping.Map) int {
 	guardRow, guardCol, _ := findInitialPosition(input)
 	count := 0
 	input.ForEach(func(r, c int, value int32) {
@@ -90,4 +102,26 @@ func countPossibleLoops(input Map) int {
 		input.Set(r, c, whatWasThere)
 	})
 	return count
+}
+
+func isFacingObstacle(m mapping.Map, r int, c int, dir int32) bool {
+	return dir == DirectionUp && r > 0 && m[r-1][c] == Obstacle ||
+		dir == DirectionLeft && c > 0 && m[r][c-1] == Obstacle ||
+		dir == DirectionRight && c+1 < m.Cols() && m[r][c+1] == Obstacle ||
+		dir == DirectionDown && r+1 < m.Rows() && m[r+1][c] == Obstacle
+}
+
+func Turn90DegreesRight(dir int32) int32 {
+	switch dir {
+	case DirectionUp:
+		return DirectionRight
+	case DirectionRight:
+		return DirectionDown
+	case DirectionDown:
+		return DirectionLeft
+	case DirectionLeft:
+		return DirectionUp
+	default:
+		panic("don't know where to turn! " + string(dir))
+	}
 }

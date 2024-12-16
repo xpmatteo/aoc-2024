@@ -1,13 +1,12 @@
 package day8
 
 import (
-	"github.com/xpmatteo/aoc-2024/day6"
 	"github.com/xpmatteo/aoc-2024/mapping"
 )
 
 const Antinode = int32('#')
 
-func plotAntinodes(input day6.Map) day6.Map {
+func plotAntinodes(input mapping.Map) mapping.Map {
 	result := input.Clone()
 	for _, frequency := range "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890" {
 		coords := findCoordinates(input, frequency)
@@ -20,7 +19,7 @@ func plotAntinodes(input day6.Map) day6.Map {
 	return result
 }
 
-func plotAntinodesPart2(input day6.Map) day6.Map {
+func plotAntinodesPart2(input mapping.Map) mapping.Map {
 	result := input.Clone()
 	for _, frequency := range "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890" {
 		coords := findCoordinates(input, frequency)
@@ -32,7 +31,7 @@ func plotAntinodesPart2(input day6.Map) day6.Map {
 	return result
 }
 
-func applyDelta(m day6.Map, startPoint mapping.Coord, delta mapping.Coord) {
+func applyDelta(m mapping.Map, startPoint mapping.Coord, delta mapping.Coord) {
 	for p := startPoint; m.IsValid(p); p = p.Minus(delta) {
 		m.SetCoord(p, Antinode)
 	}
@@ -49,7 +48,7 @@ func forAllPairs(c []mapping.Coord, f func(c0 mapping.Coord, c1 mapping.Coord)) 
 	}
 }
 
-func findCoordinates(m day6.Map, target int32) []mapping.Coord {
+func findCoordinates(m mapping.Map, target int32) []mapping.Coord {
 	var result []mapping.Coord
 	m.ForEach(func(r int, c int, value int32) {
 		if value == target {
@@ -59,7 +58,7 @@ func findCoordinates(m day6.Map, target int32) []mapping.Coord {
 	return result
 }
 
-func countAntiNodes(m day6.Map) int {
+func countAntiNodes(m mapping.Map) int {
 	var result int
 	m.ForEach(func(r int, c int, value int32) {
 		if value == Antinode {
