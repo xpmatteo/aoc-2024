@@ -4,7 +4,7 @@ import "slices"
 
 func countVisited(m Map) int {
 	count := 0
-	m.forEach(func(r int, c int, value int32) {
+	m.ForEach(func(r int, c int, value int32) {
 		if value == Visited {
 			count++
 		}
@@ -14,7 +14,7 @@ func countVisited(m Map) int {
 
 func findInitialPosition(m Map) (r int, c int, dir int32) {
 	values := []int32{DirectionUp, DirectionRight, DirectionDown, DirectionLeft}
-	m.forEach(func(rr int, cc int, vv int32) {
+	m.ForEach(func(rr int, cc int, vv int32) {
 		if slices.Index(values, vv) >= 0 {
 			r = rr
 			c = cc
@@ -77,7 +77,7 @@ func detectLoop(m Map) (loopDetected bool) {
 func countPossibleLoops(input Map) int {
 	guardRow, guardCol, _ := findInitialPosition(input)
 	count := 0
-	input.forEach(func(r, c int, value int32) {
+	input.ForEach(func(r, c int, value int32) {
 		if r == guardRow && c == guardCol {
 			return
 		}
