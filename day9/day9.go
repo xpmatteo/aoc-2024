@@ -114,11 +114,10 @@ func parseDisk2(s string) disk2 {
 }
 
 func compact2(d disk2) disk2 {
-	id := len(d) - 1
-	for ; id >= 0; id-- {
-		right, ok := d.findFile(fileId(id))
-		if ok {
-			f := d[right]
+	right := len(d) - 1
+	for ; right >= 0; right-- {
+		f := d[right]
+		if f.IsFile() {
 			fileLen := f.len
 			left := 0
 			for left < right && !d[left].fits(fileLen) {
@@ -138,7 +137,6 @@ func compact2(d disk2) disk2 {
 				d.swap(left, right)
 				d.compactEmpties()
 			}
-			println(d.String())
 		}
 	}
 	return d
@@ -172,6 +170,25 @@ func (d disk2) String() string {
 	return result
 }
 
+func (d disk2) toDisk1() disk {
+	var result disk
+	for _, span := range d {
+		for range span.len {
+			if span.IsEmpty() {
+				result = append(result, emptyBlock)
+			} else {
+				result = append(result, block(span.fileId))
+			}
+		}
+	}
+	return result
+}
+
+func (d2 disk2) checksum() int {
+	d1 := d2.toDisk1()
+	return checksum(d1)
+}
+
 func (d disk2) swap(i int, j int) {
 	d[i], d[j] = d[j], d[i]
 }
@@ -180,15 +197,6 @@ func (d disk2) split(index int, lenLeft int, lenRight int) disk2 {
 	d[index].len = lenRight
 	d = slices.Insert(d, index, empty(lenLeft))
 	return d
-}
-
-func (d disk2) findFile(id fileId) (index int, ok bool) {
-	for i, span := range d {
-		if span.fileId == id {
-			return i, true
-		}
-	}
-	return 0, false
 }
 
 func (d disk2) compactEmpties() {

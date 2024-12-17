@@ -84,36 +84,48 @@ func Test_part1(t *testing.T) {
 
 func Test_compactWholeFiles(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    disk2
-		expected disk2
+		name             string
+		input            disk2
+		expectedImage    string
+		expectedChecksum int
 	}{
 		{
-			name:     "no room",
-			input:    parseDisk2("123"),
-			expected: []blockSpan{file(0, 1), empty(2), file(1, 3)},
+			name:             "no room",
+			input:            parseDisk2("123"),
+			expectedImage:    "0..111",
+			expectedChecksum: 3 + 4 + 5,
 		},
 		{
-			name:     "fits exactly",
-			input:    parseDisk2("122"),
-			expected: []blockSpan{file(0, 1), file(1, 2), empty(2)},
+			name:             "fits exactly",
+			input:            parseDisk2("122"),
+			expectedImage:    "011..",
+			expectedChecksum: 1 + 2,
 		},
 		{
-			name:     "fits with extra room",
-			input:    parseDisk2("132"),
-			expected: []blockSpan{file(0, 1), file(1, 2), empty(3)},
+			name:          "fits with extra room",
+			input:         parseDisk2("132"),
+			expectedImage: "011...",
+		},
+		{
+			name:          "sample",
+			input:         parseDisk2(sample),
+			expectedImage: "00992111777.44.333....5555.6666.....8888..",
+		},
+		{
+			name:             "real",
+			input:            parseDisk2(day1.ReadFile("day9.txt")),
+			expectedChecksum: 11,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			//assert.Equal(t, test.expected, compact2(test.input))
-			assert.Equal(t, test.expected.String(), compact2(test.input).String())
+			solution := compact2(test.input)
+			if test.expectedChecksum > 0 {
+				assert.Equal(t, test.expectedChecksum, solution.checksum())
+			}
+			if len(test.expectedImage) > 0 {
+				assert.Equal(t, test.expectedImage, solution.String())
+			}
 		})
 	}
-}
-
-func Test_part2(t *testing.T) {
-	d := parseDisk2(sample)
-	expected := "00992111777.44.333....5555.6666.....8888.."
-	assert.Equal(t, expected, compact2(d).String())
 }
