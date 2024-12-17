@@ -3,7 +3,6 @@ package day9
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/xpmatteo/aoc-2024/day1"
-	"math"
 	"testing"
 )
 
@@ -29,18 +28,6 @@ func Test_parseDisk(t *testing.T) {
 func Test_parseSolution(t *testing.T) {
 	expected := disk{0, 0, 1, 1, e, e}
 	assert.Equal(t, expected, parseSolution("0011.."))
-}
-
-func parseSolution(s string) disk {
-	var result disk
-	for _, val := range s {
-		value := block(val - '0')
-		if val == '.' {
-			value = emptyBlock
-		}
-		result = append(result, value)
-	}
-	return result
 }
 
 const sample = "2333133121414131402"
@@ -76,12 +63,6 @@ func Test_compact(t *testing.T) {
 			steps:    -1,
 			expected: parseSolution("0099811188827773336446555566.............."),
 		},
-		//{
-		//	name:     "real",
-		//	input:    parseDisk(day1.ReadFile("day9.txt")),
-		//	steps:    -1,
-		//	expected: parseSolution("0099811188827773336446555566.............."),
-		//},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -98,32 +79,69 @@ func Test_checksum(t *testing.T) {
 func Test_part1(t *testing.T) {
 	d := parseDisk(day1.ReadFile("day9.txt"))
 	compact(d, -1)
-	assert.Equal(t, 1, checksum(d))
+	assert.Equal(t, 6334655979668, checksum(d))
 }
 
-func checksum(solution disk) int {
-	var result int
-	for i, val := range solution {
-		if val != emptyBlock {
-			result += i * int(val)
-		}
+func Test_compactWholeFiles(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    disk2
+		steps    int
+		expected disk2
+	}{
+		{
+			name:     "no room",
+			input:    parseDisk2("123"),
+			steps:    -1,
+			expected: []blockSpan{file(0, 1), empty(2), file(1, 3)},
+		},
+		{
+			name:     "fits exactly",
+			input:    parseDisk2("122"),
+			steps:    -1,
+			expected: []blockSpan{file(0, 1), file(1, 2), empty(2)},
+		},
+		{
+			name:     "fits with extra room",
+			input:    parseDisk2("132"),
+			steps:    -1,
+			expected: []blockSpan{file(0, 1), file(1, 2), empty(1), empty(2)},
+		},
+		//{
+		//	name:     "compact empties",
+		//	input:    parseDisk2("1821"),
+		//	steps:    -1,
+		//	expected: []blockSpan{file(0, 1), file(1, 2), empty(7)},
+		//},
+		//{
+		//	name:  "sample",
+		//	input: parseDisk2(sample),
+		//	steps: -1,
+		//	// 00992 111 777.44.333....5555.6666.....8888..
+		//	expected: []blockSpan{
+		//		file(0, 2),
+		//		file(9, 2),
+		//		file(2, 1),
+		//		file(1, 3),
+		//		file(7, 3),
+		//		empty(1),
+		//		file(4, 2),
+		//		empty(1),
+		//		file(3, 3),
+		//		empty(4),
+		//		file(5, 4),
+		//		empty(1),
+		//		file(6, 4),
+		//		empty(5),
+		//		file(8, 4),
+		//		empty(2),
+		//	},
+		//},
 	}
-	return result
-}
-
-func compact(d disk, steps int) {
-	if steps == -1 {
-		steps = math.MaxInt
-	}
-	left, right := 0, len(d)-1
-	for i := 0; i < steps && left < right; {
-		if d[left] != e {
-			left++
-		} else if d[right] == e {
-			right--
-		} else {
-			d[left], d[right] = d[right], d[left]
-			i++
-		}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			//assert.Equal(t, test.expected, compact2(test.input))
+			assert.Equal(t, test.expected.String(), compact2(test.input).String())
+		})
 	}
 }
