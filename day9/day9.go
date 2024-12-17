@@ -1,9 +1,9 @@
 package day9
 
 import (
-	"fmt"
 	"math"
 	"slices"
+	"strconv"
 )
 
 type block int
@@ -90,8 +90,8 @@ func (s blockSpan) IsFile() bool {
 	return s.fileId != emptySpace
 }
 
-func (s blockSpan) fits(span blockSpan) bool {
-	return s.IsEmpty() && s.len >= span.len
+func (s blockSpan) fits(len int) bool {
+	return s.IsEmpty() && s.len >= len
 }
 
 type disk2 []blockSpan
@@ -114,13 +114,14 @@ func parseDisk2(s string) disk2 {
 }
 
 func compact2(d disk2) disk2 {
-	right := len(d) - 1
-	for ; right >= 0; right-- {
-		f := d[right]
-		if f.IsFile() {
+	id := len(d) - 1
+	for ; id >= 0; id-- {
+		right, ok := d.findFile(fileId(id))
+		if ok {
+			f := d[right]
 			fileLen := f.len
 			left := 0
-			for left < right && !d[left].fits(f) {
+			for left < right && !d[left].fits(fileLen) {
 				left++
 			}
 			if left == right {
@@ -135,7 +136,9 @@ func compact2(d disk2) disk2 {
 				d = d.split(left, fileLen, emptyLen-fileLen)
 				right++
 				d.swap(left, right)
+				d.compactEmpties()
 			}
+			println(d.String())
 		}
 	}
 	return d
@@ -158,10 +161,12 @@ func file(id fileId, len int) blockSpan {
 func (d disk2) String() string {
 	var result string
 	for _, span := range d {
-		if span.IsEmpty() {
-			result += fmt.Sprintf(".%d,", span.len)
-		} else {
-			result += fmt.Sprintf("%d%d,", span.fileId, span.len)
+		for range span.len {
+			if span.IsEmpty() {
+				result += "."
+			} else {
+				result += strconv.Itoa(int(span.fileId))
+			}
 		}
 	}
 	return result
@@ -175,4 +180,22 @@ func (d disk2) split(index int, lenLeft int, lenRight int) disk2 {
 	d[index].len = lenRight
 	d = slices.Insert(d, index, empty(lenLeft))
 	return d
+}
+
+func (d disk2) findFile(id fileId) (index int, ok bool) {
+	for i, span := range d {
+		if span.fileId == id {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
+func (d disk2) compactEmpties() {
+	for i := 0; i+1 < len(d); i++ {
+		if d[i].IsEmpty() && d[i+1].IsEmpty() {
+			d[i].len += d[i+1].len
+			d[i+1].len = 0
+		}
+	}
 }
