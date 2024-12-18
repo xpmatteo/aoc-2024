@@ -28,6 +28,14 @@ func Test_part1(t *testing.T) {
 			expectedScore: 2,
 		},
 		{
+			name: "twisting trail",
+			input: maps.Map{
+				"0123456789...",
+				" 0123456789...",
+			},
+			expectedScore: 2,
+		},
+		{
 			name: "sample 4",
 			input: maps.ParseMap(`
 ..90..9
@@ -39,6 +47,31 @@ func Test_part1(t *testing.T) {
 987....`),
 			expectedScore: 4,
 		},
+		{
+			name: "sample 2",
+			input: maps.ParseMap(`
+10..9..
+2...8..
+3...7..
+4567654
+...8..3
+...9..2
+.....01`),
+			expectedScore: 3,
+		},
+		//		{
+		//			name: "larger sample",
+		//			input: maps.ParseMap(`
+		//89010123
+		//78121874
+		//87430965
+		//96549874
+		//45678903
+		//32019012
+		//01329801
+		//10456732`),
+		//			expectedScore: 36,
+		//		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
