@@ -1,12 +1,12 @@
 package day10
 
-import mymap "github.com/xpmatteo/aoc-2024/maps"
+import "github.com/xpmatteo/aoc-2024/maps"
 
-type Front map[mymap.Coord]struct{}
+type Front []maps.Coord
 
-func (f Front) Advance(m mymap.Map) Front {
-	newFront := make(Front)
-	for coord := range f {
+func (f Front) Advance(m maps.Map) Front {
+	var newFront Front
+	for _, coord := range f {
 		current := m.At(coord)
 		if current < trailStart || current > trailEnd {
 			panic("Unexpected current value " + string(current))
@@ -17,19 +17,27 @@ func (f Front) Advance(m mymap.Map) Front {
 		neighbors := coord.OrthoNeighbors()
 		for _, neighbor := range neighbors {
 			if m.At(neighbor) == current+1 {
-				newFront[neighbor] = struct{}{}
+				newFront = append(newFront, neighbor)
 			}
 		}
 	}
 	return newFront
 }
 
-func (f Front) Score() int {
+func (f Front) ScorePart1() int {
+	set := make(map[maps.Coord]struct{})
+	for _, coord := range f {
+		set[coord] = struct{}{}
+	}
+	return len(set)
+}
+
+func (f Front) ScorePart2() int {
 	return len(f)
 }
 
-func (f Front) Ongoing(m mymap.Map) bool {
-	for coord := range f {
+func (f Front) Ongoing(m maps.Map) bool {
+	for _, coord := range f {
 		// map is not empty
 		return m.At(coord) != trailEnd
 	}
@@ -37,6 +45,6 @@ func (f Front) Ongoing(m mymap.Map) bool {
 	return false
 }
 
-func NewFront(head mymap.Coord) Front {
-	return Front{head: struct{}{}}
+func NewFront(head maps.Coord) Front {
+	return Front{head}
 }
