@@ -2,6 +2,7 @@ package day10
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/xpmatteo/aoc-2024/day1"
 	"github.com/xpmatteo/aoc-2024/maps"
 	"testing"
 )
@@ -33,7 +34,7 @@ func Test_part1(t *testing.T) {
 				"0123456789...",
 				" 0123456789...",
 			},
-			expectedScore: 2,
+			expectedScore: 3,
 		},
 		{
 			name: "sample 4",
@@ -48,7 +49,7 @@ func Test_part1(t *testing.T) {
 			expectedScore: 4,
 		},
 		{
-			name: "sample 2",
+			name: "sample two trailheads 1+2",
 			input: maps.ParseMap(`
 10..9..
 2...8..
@@ -59,19 +60,24 @@ func Test_part1(t *testing.T) {
 .....01`),
 			expectedScore: 3,
 		},
-		//		{
-		//			name: "larger sample",
-		//			input: maps.ParseMap(`
-		//89010123
-		//78121874
-		//87430965
-		//96549874
-		//45678903
-		//32019012
-		//01329801
-		//10456732`),
-		//			expectedScore: 36,
-		//		},
+		{
+			name: "larger sample",
+			input: maps.ParseMap(`
+89010123
+78121874
+87430965
+96549874
+45678903
+32019012
+01329801
+10456732`),
+			expectedScore: 36,
+		},
+		{
+			name:          "real",
+			input:         maps.ParseMap(day1.ReadFile("day10.txt")),
+			expectedScore: 535,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

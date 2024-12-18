@@ -1,14 +1,14 @@
 package day10
 
-import "github.com/xpmatteo/aoc-2024/maps"
+import mymap "github.com/xpmatteo/aoc-2024/maps"
 
-type Front map[maps.Coord]struct{}
+type Front map[mymap.Coord]struct{}
 
-func (f Front) Advance(m maps.Map) Front {
+func (f Front) Advance(m mymap.Map) Front {
 	newFront := make(Front)
 	for coord := range f {
 		current := m.At(coord)
-		if current < '0' || current > '9' {
+		if current < trailStart || current > trailEnd {
 			panic("Unexpected current value " + string(current))
 		}
 		if current == trailEnd {
@@ -28,7 +28,7 @@ func (f Front) Score() int {
 	return len(f)
 }
 
-func (f Front) Ongoing(m maps.Map) bool {
+func (f Front) Ongoing(m mymap.Map) bool {
 	for coord := range f {
 		// map is not empty
 		return m.At(coord) != trailEnd
@@ -37,6 +37,6 @@ func (f Front) Ongoing(m maps.Map) bool {
 	return false
 }
 
-func NewFront(head maps.Coord) Front {
+func NewFront(head mymap.Coord) Front {
 	return Front{head: struct{}{}}
 }
