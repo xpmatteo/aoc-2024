@@ -1,4 +1,4 @@
-package mapping
+package maps
 
 import "strings"
 
@@ -58,4 +58,8 @@ func (m Map) IsValid(coord Coord) bool {
 	r := coord.Row
 	c := coord.Col
 	return r >= 0 && c >= 0 && r < m.Rows() && c < m.Cols()
+}
+
+func (m Map) At(coord Coord) int32 {
+	return int32(m[coord.Row][coord.Col])
 }

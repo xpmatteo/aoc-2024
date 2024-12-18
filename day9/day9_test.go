@@ -114,7 +114,7 @@ func Test_compactWholeFiles(t *testing.T) {
 		{
 			name:             "real",
 			input:            parseDisk2(day1.ReadFile("day9.txt")),
-			expectedChecksum: 11,
+			expectedChecksum: 6349492251099,
 		},
 	}
 	for _, test := range tests {

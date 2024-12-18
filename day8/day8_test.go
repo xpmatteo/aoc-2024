@@ -36,18 +36,18 @@ const sampleSolved = `......#....#
 func Test_part1(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         mapping.Map
-		expected      mapping.Map
+		input         maps.Map
+		expected      maps.Map
 		expectedCount int
 	}{
 		{
 			name: "1 antenna",
-			input: mapping.Map{
+			input: maps.Map{
 				"..........",
 				"........a.",
 				"..........",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				"..........",
 				"........a.",
 				"..........",
@@ -56,7 +56,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "2 antennas",
-			input: mapping.Map{
+			input: maps.Map{
 				"..........",
 				"..........",
 				"..........",
@@ -68,7 +68,7 @@ func Test_part1(t *testing.T) {
 				"..........",
 				"..........",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				"..........",
 				"...#......",
 				"..........",
@@ -84,17 +84,17 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "antinode falling outside",
-			input: mapping.Map{
+			input: maps.Map{
 				".a......a.",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				".a......a.",
 			},
 			expectedCount: 0,
 		},
 		{
 			name: "3 nodes",
-			input: mapping.Map{
+			input: maps.Map{
 				"..........",
 				"..........",
 				"..........",
@@ -106,7 +106,7 @@ func Test_part1(t *testing.T) {
 				"..........",
 				"..........",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				"..........",
 				"...#......",
 				"#.........",
@@ -122,7 +122,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "different frequencies",
-			input: mapping.Map{
+			input: maps.Map{
 				"..........",
 				"..........",
 				"..........",
@@ -134,7 +134,7 @@ func Test_part1(t *testing.T) {
 				"..........",
 				"..........",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				"..........",
 				"...#......",
 				"#.........",
@@ -150,13 +150,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name:          "sample",
-			input:         mapping.ParseMap(sample),
-			expected:      mapping.ParseMap(sampleSolved),
+			input:         maps.ParseMap(sample),
+			expected:      maps.ParseMap(sampleSolved),
 			expectedCount: 14,
 		},
 		{
 			name:          "real",
-			input:         mapping.ParseMap(day1.ReadFile("day8.txt")),
+			input:         maps.ParseMap(day1.ReadFile("day8.txt")),
 			expectedCount: 390,
 		},
 	}
@@ -198,29 +198,29 @@ const sample2Solved = `
 func Test_part2(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         mapping.Map
-		expected      mapping.Map
+		input         maps.Map
+		expected      maps.Map
 		expectedCount int
 	}{
 		{
 			name: "simple",
-			input: mapping.Map{
+			input: maps.Map{
 				".....a...a........",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				".#...#...#...#...#",
 			},
 			expectedCount: 5,
 		},
 		{
 			name:          "sample2",
-			input:         mapping.ParseMap(sample2),
-			expected:      mapping.ParseMap(sample2Solved),
+			input:         maps.ParseMap(sample2),
+			expected:      maps.ParseMap(sample2Solved),
 			expectedCount: 9,
 		},
 		{
 			name:          "real",
-			input:         mapping.ParseMap(day1.ReadFile("day8.txt")),
+			input:         maps.ParseMap(day1.ReadFile("day8.txt")),
 			expectedCount: 1246,
 		},
 	}

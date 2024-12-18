@@ -32,19 +32,19 @@ const sampleSolved = `....#.....
 func Test_part1(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         mapping.Map
-		expected      mapping.Map
+		input         maps.Map
+		expected      maps.Map
 		expectedCount int
 	}{
 		{
 			name: "move up",
-			input: mapping.Map{
+			input: maps.Map{
 				"...",
 				"...",
 				".^.",
 				"...",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				".X.",
 				".X.",
 				".X.",
@@ -54,12 +54,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "move right",
-			input: mapping.Map{
+			input: maps.Map{
 				"....",
 				">...",
 				"....",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				"....",
 				"XXXX",
 				"....",
@@ -68,12 +68,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "move down",
-			input: mapping.Map{
+			input: maps.Map{
 				"....",
 				".v..",
 				"....",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				"....",
 				".X..",
 				".X..",
@@ -82,12 +82,12 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "up then right",
-			input: mapping.Map{
+			input: maps.Map{
 				".#..",
 				"....",
 				".^..",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				".#..",
 				".XXX",
 				".X..",
@@ -96,13 +96,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "u turn",
-			input: mapping.Map{
+			input: maps.Map{
 				".#....",
 				".....#",
 				"......",
 				".^....",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				".#....",
 				".XXXX#",
 				".X..X.",
@@ -112,7 +112,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "round",
-			input: mapping.Map{
+			input: maps.Map{
 				".#........",
 				".........#",
 				"..........",
@@ -120,7 +120,7 @@ func Test_part1(t *testing.T) {
 				"........#.",
 				".^........",
 			},
-			expected: mapping.Map{
+			expected: maps.Map{
 				".#...X....",
 				".XXXXXXXX#",
 				".X...X..X.",
@@ -132,13 +132,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name:          "sample",
-			input:         mapping.ParseMap(sample),
-			expected:      mapping.ParseMap(sampleSolved),
+			input:         maps.ParseMap(sample),
+			expected:      maps.ParseMap(sampleSolved),
 			expectedCount: 41,
 		},
 		{
 			name:          "real",
-			input:         mapping.ParseMap(day1.ReadFile("day6.txt")),
+			input:         maps.ParseMap(day1.ReadFile("day6.txt")),
 			expectedCount: 5153,
 		},
 	}
@@ -156,12 +156,12 @@ func Test_part1(t *testing.T) {
 func Test_detectLoop(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    mapping.Map
+		input    maps.Map
 		expected bool
 	}{
 		{
 			name: "no loop",
-			input: mapping.Map{
+			input: maps.Map{
 				"...",
 				"...",
 				".^.",
@@ -171,7 +171,7 @@ func Test_detectLoop(t *testing.T) {
 		},
 		{
 			name: "loop",
-			input: mapping.Map{
+			input: maps.Map{
 				".#........",
 				".........#",
 				"..........",
@@ -183,7 +183,7 @@ func Test_detectLoop(t *testing.T) {
 		},
 		{
 			name: "tight loop",
-			input: mapping.Map{
+			input: maps.Map{
 				//1234
 				".#...", // 0
 				"#.#..", // 1
@@ -204,12 +204,12 @@ func Test_detectLoop(t *testing.T) {
 func Test_part2(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         mapping.Map
+		input         maps.Map
 		expectedCount int
 	}{
 		{
 			name: "no loops possible",
-			input: mapping.Map{
+			input: maps.Map{
 				"...",
 				"...",
 				".^.",
@@ -219,7 +219,7 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name: "one loop possible",
-			input: mapping.Map{
+			input: maps.Map{
 				".#........",
 				".........#",
 				"..........",
@@ -231,12 +231,12 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name:          "sample",
-			input:         mapping.ParseMap(sample),
+			input:         maps.ParseMap(sample),
 			expectedCount: 6,
 		},
 		{
 			name:          "real",
-			input:         mapping.ParseMap(day1.ReadFile("day6.txt")),
+			input:         maps.ParseMap(day1.ReadFile("day6.txt")),
 			expectedCount: 1711,
 		},
 	}

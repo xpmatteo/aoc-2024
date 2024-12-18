@@ -128,15 +128,10 @@ func compact2(d disk2) disk2 {
 				continue
 			}
 			emptyLen := d[left].len
-			if emptyLen == fileLen {
-				d.swap(left, right)
-			}
-			if emptyLen > fileLen {
-				d = d.split(left, fileLen, emptyLen-fileLen)
-				right++
-				d.swap(left, right)
-				d.compactEmpties()
-			}
+			d = d.split(left, fileLen, emptyLen-fileLen)
+			right++
+			d.swap(left, right)
+			d.compactEmpties()
 		}
 	}
 	return d

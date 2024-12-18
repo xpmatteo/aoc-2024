@@ -1,4 +1,4 @@
-package mapping
+package maps
 
 type Coord struct {
 	Row, Col int
@@ -15,5 +15,12 @@ func (c Coord) Plus(delta Coord) Coord {
 	return Coord{
 		Row: c.Row + delta.Row,
 		Col: c.Col + delta.Col,
+	}
+}
+
+func (c0 Coord) East() Coord {
+	return Coord{
+		Row: c0.Row,
+		Col: c0.Col + 1,
 	}
 }
