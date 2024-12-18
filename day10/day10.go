@@ -3,8 +3,14 @@ package day10
 import "github.com/xpmatteo/aoc-2024/maps"
 
 func scoreAllTrails(input maps.Map) int {
-	trailHead := maps.Coord{0, 3}
-	return scoreTrailHead(trailHead, input)
+	score := 0
+	input.ForEach(func(r, c int, value int32) {
+		if value == '0' {
+			trailHead := maps.Coord{r, c}
+			score += scoreTrailHead(trailHead, input)
+		}
+	})
+	return score
 }
 
 func scoreTrailHead(trailHead maps.Coord, m maps.Map) int {

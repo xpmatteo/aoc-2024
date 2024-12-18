@@ -4,10 +4,10 @@ type Coord struct {
 	Row, Col int
 }
 
-func (c0 Coord) Minus(c1 Coord) Coord {
+func (c Coord) Minus(c1 Coord) Coord {
 	return Coord{
-		Row: c0.Row - c1.Row,
-		Col: c0.Col - c1.Col,
+		Row: c.Row - c1.Row,
+		Col: c.Col - c1.Col,
 	}
 }
 
@@ -18,9 +18,39 @@ func (c Coord) Plus(delta Coord) Coord {
 	}
 }
 
-func (c0 Coord) East() Coord {
+func (c Coord) OrthoNeighbors() []Coord {
+	return []Coord{
+		c.North(),
+		c.East(),
+		c.South(),
+		c.West(),
+	}
+}
+
+func (c Coord) North() Coord {
 	return Coord{
-		Row: c0.Row,
-		Col: c0.Col + 1,
+		Row: c.Row - 1,
+		Col: c.Col,
+	}
+}
+
+func (c Coord) East() Coord {
+	return Coord{
+		Row: c.Row,
+		Col: c.Col + 1,
+	}
+}
+
+func (c Coord) South() Coord {
+	return Coord{
+		Row: c.Row + 1,
+		Col: c.Col,
+	}
+}
+
+func (c Coord) West() Coord {
+	return Coord{
+		Row: c.Row,
+		Col: c.Col - 1,
 	}
 }

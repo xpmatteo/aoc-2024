@@ -22,6 +22,23 @@ func Test_part1(t *testing.T) {
 			input:         maps.Map{"...012345678..."},
 			expectedScore: 0,
 		},
+		{
+			name:          "forked trail",
+			input:         maps.Map{"9876543210123456789..."},
+			expectedScore: 2,
+		},
+		{
+			name: "sample 4",
+			input: maps.ParseMap(`
+..90..9
+...1.98
+...2..7
+6543456
+765.987
+876....
+987....`),
+			expectedScore: 4,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

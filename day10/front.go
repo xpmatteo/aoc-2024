@@ -11,10 +11,11 @@ func (f Front) Advance(m maps.Map) Front {
 		if current == '9' {
 			continue
 		}
-		next := current + 1
-		neighbor := coord.East()
-		if m.At(neighbor) == next {
-			newFront = append(newFront, neighbor)
+		neighbors := coord.OrthoNeighbors()
+		for _, neighbor := range neighbors {
+			if m.At(neighbor) == current+1 {
+				newFront = append(newFront, neighbor)
+			}
 		}
 	}
 	return newFront

@@ -61,5 +61,8 @@ func (m Map) IsValid(coord Coord) bool {
 }
 
 func (m Map) At(coord Coord) int32 {
-	return int32(m[coord.Row][coord.Col])
+	if m.IsValid(coord) {
+		return int32(m[coord.Row][coord.Col])
+	}
+	return 0
 }
