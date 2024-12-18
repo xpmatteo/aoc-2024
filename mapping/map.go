@@ -1,4 +1,4 @@
-package maps
+package mapping
 
 import "strings"
 

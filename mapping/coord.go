@@ -1,4 +1,4 @@
-package maps
+package mapping
 
 type Coord struct {
 	Row, Col int

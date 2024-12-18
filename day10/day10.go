@@ -1,35 +1,37 @@
 package day10
 
-import "github.com/xpmatteo/aoc-2024/maps"
+import (
+	"github.com/xpmatteo/aoc-2024/mapping"
+)
 
 const trailStart = '0'
 const trailEnd = '9'
 
-func scoreAllTrailsPart1(input maps.Map) int {
+func scoreAllTrails(input mapping.Map) int {
 	score := 0
 	input.ForEach(func(r, c int, value int32) {
 		if value == trailStart {
-			trailHead := maps.Coord{r, c}
-			front := scoreTrailHead(trailHead, input)
+			trailHead := mapping.Coord{r, c}
+			front := exploreTrails(trailHead, input)
 			score += front.ScorePart1()
 		}
 	})
 	return score
 }
 
-func scoreAllTrailsPart2(input maps.Map) int {
+func rateAllTrails(input mapping.Map) int {
 	score := 0
 	input.ForEach(func(r, c int, value int32) {
 		if value == trailStart {
-			trailHead := maps.Coord{r, c}
-			front := scoreTrailHead(trailHead, input)
-			score += front.ScorePart2()
+			trailHead := mapping.Coord{r, c}
+			front := exploreTrails(trailHead, input)
+			score += front.Rating()
 		}
 	})
 	return score
 }
 
-func scoreTrailHead(trailHead maps.Coord, m maps.Map) Front {
+func exploreTrails(trailHead mapping.Coord, m mapping.Map) Front {
 	front := NewFront(trailHead)
 	for front.Ongoing(m) {
 		front = front.Advance(m)

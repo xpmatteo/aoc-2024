@@ -1,10 +1,12 @@
 package day10
 
-import "github.com/xpmatteo/aoc-2024/maps"
+import (
+	"github.com/xpmatteo/aoc-2024/mapping"
+)
 
-type Front []maps.Coord
+type Front []mapping.Coord
 
-func (f Front) Advance(m maps.Map) Front {
+func (f Front) Advance(m mapping.Map) Front {
 	var newFront Front
 	for _, coord := range f {
 		current := m.At(coord)
@@ -25,18 +27,18 @@ func (f Front) Advance(m maps.Map) Front {
 }
 
 func (f Front) ScorePart1() int {
-	set := make(map[maps.Coord]struct{})
+	set := make(map[mapping.Coord]struct{})
 	for _, coord := range f {
 		set[coord] = struct{}{}
 	}
 	return len(set)
 }
 
-func (f Front) ScorePart2() int {
+func (f Front) Rating() int {
 	return len(f)
 }
 
-func (f Front) Ongoing(m maps.Map) bool {
+func (f Front) Ongoing(m mapping.Map) bool {
 	for _, coord := range f {
 		// map is not empty
 		return m.At(coord) != trailEnd
@@ -45,6 +47,6 @@ func (f Front) Ongoing(m maps.Map) bool {
 	return false
 }
 
-func NewFront(head maps.Coord) Front {
+func NewFront(head mapping.Coord) Front {
 	return Front{head}
 }

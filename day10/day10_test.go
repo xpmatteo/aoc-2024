@@ -3,34 +3,34 @@ package day10
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/xpmatteo/aoc-2024/day1"
-	"github.com/xpmatteo/aoc-2024/maps"
+	"github.com/xpmatteo/aoc-2024/mapping"
 	"testing"
 )
 
 func Test_part1(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         maps.Map
+		input         mapping.Map
 		expectedScore int
 	}{
 		{
 			name:          "one complete trail",
-			input:         maps.Map{"...0123456789..."},
+			input:         mapping.Map{"...0123456789..."},
 			expectedScore: 1,
 		},
 		{
 			name:          "one incomplete trail",
-			input:         maps.Map{"...012345678..."},
+			input:         mapping.Map{"...012345678..."},
 			expectedScore: 0,
 		},
 		{
 			name:          "forked trail",
-			input:         maps.Map{"9876543210123456789..."},
+			input:         mapping.Map{"9876543210123456789..."},
 			expectedScore: 2,
 		},
 		{
 			name: "twisting trail",
-			input: maps.Map{
+			input: mapping.Map{
 				"0123456789...",
 				" 0123456789...",
 			},
@@ -38,7 +38,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "sample 4",
-			input: maps.ParseMap(`
+			input: mapping.ParseMap(`
 ..90..9
 ...1.98
 ...2..7
@@ -50,7 +50,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "sample two trailheads 1+2",
-			input: maps.ParseMap(`
+			input: mapping.ParseMap(`
 10..9..
 2...8..
 3...7..
@@ -62,7 +62,7 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name: "larger sample",
-			input: maps.ParseMap(`
+			input: mapping.ParseMap(`
 89010123
 78121874
 87430965
@@ -75,13 +75,13 @@ func Test_part1(t *testing.T) {
 		},
 		{
 			name:          "real",
-			input:         maps.ParseMap(day1.ReadFile("day10.txt")),
+			input:         mapping.ParseMap(day1.ReadFile("day10.txt")),
 			expectedScore: 535,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expectedScore, scoreAllTrailsPart1(test.input))
+			assert.Equal(t, test.expectedScore, scoreAllTrails(test.input))
 		})
 	}
 }
@@ -89,12 +89,12 @@ func Test_part1(t *testing.T) {
 func Test_part2(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         maps.Map
+		input         mapping.Map
 		expectedScore int
 	}{
 		{
 			name: "twisting trail",
-			input: maps.Map{
+			input: mapping.Map{
 				"0123456789...",
 				" 0123456789...",
 			},
@@ -102,7 +102,7 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name: "rating 3",
-			input: maps.ParseMap(`
+			input: mapping.ParseMap(`
 .....0.
 ..4321.
 ..5..2.
@@ -114,7 +114,7 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name: "sample two trailheads 1+2",
-			input: maps.ParseMap(`
+			input: mapping.ParseMap(`
 ..90..9
 ...1.98
 ...2..7
@@ -126,7 +126,7 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name: "227",
-			input: maps.ParseMap(`
+			input: mapping.ParseMap(`
 012345
 123456
 234567
@@ -137,7 +137,7 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name: "larger sample",
-			input: maps.ParseMap(`
+			input: mapping.ParseMap(`
 89010123
 78121874
 87430965
@@ -150,13 +150,13 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name:          "real",
-			input:         maps.ParseMap(day1.ReadFile("day10.txt")),
+			input:         mapping.ParseMap(day1.ReadFile("day10.txt")),
 			expectedScore: 1186,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expectedScore, scoreAllTrailsPart2(test.input))
+			assert.Equal(t, test.expectedScore, rateAllTrails(test.input))
 		})
 	}
 }
