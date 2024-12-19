@@ -106,7 +106,7 @@ func Test_part1(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			evolved := blink1(test.input, test.steps)
+			evolved := blink(test.input, test.steps)
 			if len(test.expected) > 0 {
 				assert.Equal(t, test.expected, evolved)
 			}

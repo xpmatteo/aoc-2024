@@ -27,22 +27,22 @@ func (sl StoneList) Size() int {
 	return output
 }
 
-func blink1(stones StoneList, steps int) StoneList {
+func blink(stones StoneList, steps int) StoneList {
 	for range steps {
-		stones = blinkOnce1(stones)
+		stones = blinkOnce(stones)
 	}
 	return stones
 }
 
-func blinkOnce1(sl StoneList) StoneList {
+func blinkOnce(sl StoneList) StoneList {
 	var output = make(StoneList)
 	for stone, count := range sl {
-		blinkStone1(output, stone, count)
+		blinkOneStoneOnce(output, stone, count)
 	}
 	return output
 }
 
-func blinkStone1(sl StoneList, sto Stone, count int) {
+func blinkOneStoneOnce(sl StoneList, sto Stone, count int) {
 	if sto == 0 {
 		sl.Add(1, count)
 	} else if sto.HasEvenDigits() {
