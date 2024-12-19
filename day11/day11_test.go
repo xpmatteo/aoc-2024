@@ -2,7 +2,6 @@ package day11
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/xpmatteo/aoc-2024/day1"
 	"testing"
 )
 
@@ -98,13 +97,12 @@ func Test_part1(t *testing.T) {
 			steps:    1,
 			expected: parseStones("1 1 1 1"),
 		},
-
-		//{
-		//	name:          "real 75",
-		//	input:         parseStones("0 89741 316108 7641 756 9 7832357 91"),
-		//	steps:         75,
-		//	expectedCount: 193899,
-		//},
+		{
+			name:          "real 75",
+			input:         parseStones("0 89741 316108 7641 756 9 7832357 91"),
+			steps:         75,
+			expectedCount: 229682160383225,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -126,14 +124,4 @@ func Test_StoneList_Add(t *testing.T) {
 
 	assert.Equal(t, 0, sl[0])
 	assert.Equal(t, 7, sl[1])
-}
-
-func Test_75(t *testing.T) {
-	stones := parseStones("0 89741 316108 7641 756 9 7832357 91")
-	sw := day1.Stopwatch()
-	for range 39 {
-		stones = blinkOnce1(stones)
-		//println("iteration", i, "size", len(stones))
-	}
-	sw("done")
 }
