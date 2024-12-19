@@ -38,11 +38,17 @@ func Test_part1(t *testing.T) {
 			expectedCount: 55312,
 		},
 		{
-			name:          "real",
+			name:          "real 25",
 			input:         parseStones("0 89741 316108 7641 756 9 7832357 91"),
 			steps:         25,
 			expectedCount: 193899,
 		},
+		//{
+		//	name:          "real 75",
+		//	input:         parseStones("0 89741 316108 7641 756 9 7832357 91"),
+		//	steps:         75,
+		//	expectedCount: 193899,
+		//},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -54,5 +60,13 @@ func Test_part1(t *testing.T) {
 				assert.Equal(t, test.expectedCount, len(evolved))
 			}
 		})
+	}
+}
+
+func Test_75(t *testing.T) {
+	stones := parseStones("0 89741 316108 7641 756 9 7832357 91")
+	for i := range 75 {
+		stones = blinkOnce(stones)
+		println("iteration", i, "size", len(stones))
 	}
 }
