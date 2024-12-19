@@ -2,28 +2,77 @@ package day11
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/xpmatteo/aoc-2024/day1"
 	"testing"
 )
+
+func Test_parseStones(t *testing.T) {
+	tests := []struct {
+		stones   string
+		expected StoneList
+	}{
+		{
+			stones:   "1",
+			expected: make(StoneList).Add(1, 1),
+		},
+		{
+			stones:   "1 2 3",
+			expected: make(StoneList).Add(1, 1).Add(2, 1).Add(3, 1),
+		},
+		{
+			stones:   "1 1 1",
+			expected: make(StoneList).Add(1, 3),
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.stones, func(t *testing.T) {
+			assert.Equal(t, test.expected, parseStones(test.stones))
+		})
+	}
+}
+
+func Test_StoneList_Size(t *testing.T) {
+	tests := []struct {
+		stones   string
+		expected int
+	}{
+		{
+			stones:   "1",
+			expected: 1,
+		},
+		{
+			stones:   "1 1 2",
+			expected: 3,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.stones, func(t *testing.T) {
+			assert.Equal(t, test.expected, parseStones(test.stones).Size())
+		})
+	}
+}
 
 func Test_part1(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         []Stone
+		input         StoneList
 		steps         int
-		expected      []Stone
+		expected      StoneList
 		expectedCount int
 	}{
 		{
-			name:     "first example",
-			input:    parseStones("0 1 10 99 999"),
-			steps:    1,
-			expected: parseStones("1 2024 1 0 9 9 2021976"),
+			name:          "first example",
+			input:         parseStones("0 1 10 99 999"),
+			steps:         1,
+			expected:      parseStones("1 2024 1 0 9 9 2021976"),
+			expectedCount: 7,
 		},
 		{
-			name:     "iterate 2",
-			input:    parseStones("0"),
-			steps:    2,
-			expected: parseStones("2024"),
+			name:          "iterate 2",
+			input:         parseStones("0"),
+			steps:         2,
+			expected:      parseStones("2024"),
+			expectedCount: 1,
 		},
 		{
 			name:     "sample 6 blinks",
@@ -43,6 +92,13 @@ func Test_part1(t *testing.T) {
 			steps:         25,
 			expectedCount: 193899,
 		},
+		{
+			name:     "repeated numbers",
+			input:    parseStones("0 0 0 0"),
+			steps:    1,
+			expected: parseStones("1 1 1 1"),
+		},
+
 		//{
 		//	name:          "real 75",
 		//	input:         parseStones("0 89741 316108 7641 756 9 7832357 91"),
@@ -52,21 +108,32 @@ func Test_part1(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			evolved := blink(test.input, test.steps)
+			evolved := blink1(test.input, test.steps)
 			if len(test.expected) > 0 {
 				assert.Equal(t, test.expected, evolved)
 			}
 			if test.expectedCount > 0 {
-				assert.Equal(t, test.expectedCount, len(evolved))
+				assert.Equal(t, test.expectedCount, evolved.Size())
 			}
 		})
 	}
 }
 
+func Test_StoneList_Add(t *testing.T) {
+	sl := make(StoneList)
+	sl.Add(1, 3)
+	sl.Add(1, 4)
+
+	assert.Equal(t, 0, sl[0])
+	assert.Equal(t, 7, sl[1])
+}
+
 func Test_75(t *testing.T) {
 	stones := parseStones("0 89741 316108 7641 756 9 7832357 91")
-	for i := range 75 {
-		stones = blinkOnce(stones)
-		println("iteration", i, "size", len(stones))
+	sw := day1.Stopwatch()
+	for range 39 {
+		stones = blinkOnce1(stones)
+		//println("iteration", i, "size", len(stones))
 	}
+	sw("done")
 }

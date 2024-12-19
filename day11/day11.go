@@ -5,32 +5,51 @@ import (
 	"strconv"
 	"strings"
 )
-import "github.com/samber/lo"
 
 type Stone int
+type StoneList map[Stone]int
 
-func blink(stones []Stone, steps int) []Stone {
-	for range steps {
-		stones = blinkOnce(stones)
+func (sl StoneList) Add(stone Stone, count int) StoneList {
+	n, ok := sl[stone]
+	if ok {
+		sl[stone] = n + count
+	} else {
+		sl[stone] = count
 	}
-	return stones
+	return sl
 }
 
-func blinkOnce(input []Stone) []Stone {
-	var output []Stone
-	for _, sto := range input {
-		output = append(output, blinkStone(sto)...)
+func (sl StoneList) Size() int {
+	output := 0
+	for _, count := range sl {
+		output += count
 	}
 	return output
 }
 
-func blinkStone(sto Stone) []Stone {
+func blink1(stones StoneList, steps int) StoneList {
+	for range steps {
+		stones = blinkOnce1(stones)
+	}
+	return stones
+}
+
+func blinkOnce1(sl StoneList) StoneList {
+	var output = make(StoneList)
+	for stone, count := range sl {
+		blinkStone1(output, stone, count)
+	}
+	return output
+}
+
+func blinkStone1(sl StoneList, sto Stone, count int) {
 	if sto == 0 {
-		return []Stone{1}
+		sl.Add(1, count)
 	} else if sto.HasEvenDigits() {
-		return []Stone{sto.LeftHalf(), sto.RightHalf()}
+		sl.Add(sto.LeftHalf(), count)
+		sl.Add(sto.RightHalf(), count)
 	} else {
-		return []Stone{sto * 2024}
+		sl.Add(sto*2024, count)
 	}
 }
 
@@ -52,9 +71,11 @@ func (s Stone) RightHalf() Stone {
 	return Stone(day1.Atoi(str[len(str)/2:]))
 }
 
-func parseStones(input string) []Stone {
+func parseStones(input string) StoneList {
+	result := make(StoneList)
 	split := strings.Split(input, " ")
-	return lo.Map(split, func(item string, index int) Stone {
-		return Stone(day1.Atoi(item))
-	})
+	for _, str := range split {
+		result.Add(Stone(day1.Atoi(str)), 1)
+	}
+	return result
 }
