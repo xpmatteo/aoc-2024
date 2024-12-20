@@ -39,7 +39,17 @@ func initRegionIds(plot mapping.Map) [][]RegionId {
 	return ids
 }
 
-func (rs RegionSet) Report() Report {
+func (rs RegionSet) ReportPart1() Report {
+	perimeterF := rs.perimeterPart1
+	return rs.ReportFunc(perimeterF)
+}
+
+func (rs RegionSet) ReportPart2() Report {
+	perimeterF := rs.perimeterPart2
+	return rs.ReportFunc(perimeterF)
+}
+
+func (rs RegionSet) ReportFunc(perimeterF func(c mapping.Coord, id RegionId) int) Report {
 	rs.mergeRegionIds()
 	areas := make(map[RegionId]int)
 	perims := make(map[RegionId]int)
@@ -49,7 +59,7 @@ func (rs RegionSet) Report() Report {
 		plant := Plant(value)
 		plants[id] = plant
 		areas[id] = areas[id] + 1
-		perimeter := rs.perimeter(c, id)
+		perimeter := perimeterF(c, id)
 		perims[id] = perims[id] + perimeter
 	})
 	var result []ReportLine
@@ -63,7 +73,7 @@ func (rs RegionSet) Report() Report {
 	return result
 }
 
-func (rs RegionSet) perimeter(c mapping.Coord, id RegionId) int {
+func (rs RegionSet) perimeterPart1(c mapping.Coord, id RegionId) int {
 	var perimeter int
 	for _, coord := range c.OrthoNeighbors() {
 		if !rs.plot.IsValid(coord) || rs.ids[coord.Row][coord.Col] != id {
@@ -71,6 +81,47 @@ func (rs RegionSet) perimeter(c mapping.Coord, id RegionId) int {
 		}
 	}
 	return perimeter
+}
+
+func (rs RegionSet) perimeterPart2(c mapping.Coord, id RegionId) int {
+	var perimeter int
+	{
+		vertNeighbor := c.North()
+		alreadyCounted := rs.sameRegion(c.West(), id) && !rs.sameRegion(c.NorthWest(), id)
+		if !alreadyCounted && !(rs.sameRegion(vertNeighbor, id)) {
+			perimeter++
+		}
+	}
+	{
+		vertNeighbor := c.South()
+		alreadyCounted := rs.sameRegion(c.West(), id)
+		if !alreadyCounted && !(rs.sameRegion(vertNeighbor, id)) {
+			perimeter++
+		}
+	}
+	{
+		horNeighbor := c.West()
+		alreadyCounted := rs.sameRegion(c.North(), id) && !rs.sameRegion(c.NorthWest(), id)
+		if !alreadyCounted && !(rs.sameRegion(horNeighbor, id)) {
+			perimeter++
+		}
+	}
+	{
+		horNeighbor := c.East()
+		alreadyCounted := rs.sameRegion(c.North(), id)
+		if !alreadyCounted && !(rs.sameRegion(horNeighbor, id)) {
+			perimeter++
+		}
+	}
+	return perimeter
+}
+
+func (rs RegionSet) sameRegion(c mapping.Coord, id RegionId) bool {
+	return rs.plot.IsValid(c) && rs.idOf(c) == id
+}
+
+func (rs RegionSet) idOf(c mapping.Coord) RegionId {
+	return rs.ids[c.Row][c.Col]
 }
 
 func (rs RegionSet) mergeRegionIds() {

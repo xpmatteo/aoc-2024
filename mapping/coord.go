@@ -54,3 +54,10 @@ func (c Coord) West() Coord {
 		Col: c.Col - 1,
 	}
 }
+
+func (c Coord) NorthWest() Coord {
+	return Coord{
+		Row: c.Row - 1,
+		Col: c.Col - 1,
+	}
+}
