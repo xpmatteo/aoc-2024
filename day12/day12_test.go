@@ -2,6 +2,7 @@ package day12
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/xpmatteo/aoc-2024/day1"
 	"github.com/xpmatteo/aoc-2024/mapping"
 	"slices"
 	"testing"
@@ -10,14 +11,16 @@ import (
 //goland:noinspection GoStructInitializationWithoutFieldNames
 func Test_part1(t *testing.T) {
 	tests := []struct {
-		name     string
-		plot     mapping.Map
-		expected Report
+		name              string
+		plot              mapping.Map
+		expected          Report
+		expectedTotalCost int
 	}{
 		{
-			name:     "A",
-			plot:     mapping.Map{"A"},
-			expected: Report{{'A', 1, 4}},
+			name:              "A",
+			plot:              mapping.Map{"A"},
+			expected:          Report{{'A', 1, 4}},
+			expectedTotalCost: 4,
 		},
 		{
 			name:     "AA",
@@ -81,17 +84,6 @@ VVIIICJJEE
 MIIIIIJJEE
 MIIISIJEEE
 MMMISSJEEE`),
-			// A region of R plants with price 12 * 18 = 216.
-			//A region of I plants with price  4 *  8 = 32.
-			//A region of C plants with price 14 * 28 = 392.
-			//A region of F plants with price 10 * 18 = 180.
-			//A region of V plants with price 13 * 20 = 260.
-			//A region of J plants with price 11 * 20 = 220.
-			//A region of C plants with price  1 *  4 = 4.
-			//A region of E plants with price 13 * 18 = 234.
-			//A region of I plants with price 14 * 22 = 308.
-			//A region of M plants with price  5 * 12 = 60.
-			//A region of S plants with price  3 *  8 = 24.
 			expected: Report{
 				{'R', 12, 18},
 				{'I', 4, 8},
@@ -105,12 +97,23 @@ MMMISSJEEE`),
 				{'M', 5, 12},
 				{'S', 3, 8},
 			},
+			expectedTotalCost: 1930,
+		},
+		{
+			name:              "real",
+			plot:              mapping.ParseMap(day1.ReadFile("day12.txt")),
+			expectedTotalCost: 1370258,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r := NewRegionSet(test.plot)
-			assert.Equal(t, normalize(test.expected), normalize(r.Report()))
+			report := NewRegionSet(test.plot).Report()
+			if test.expectedTotalCost > 0 {
+				assert.Equal(t, test.expectedTotalCost, report.TotalCost())
+			}
+			if test.expected != nil {
+				assert.Equal(t, normalize(test.expected), normalize(report))
+			}
 		})
 	}
 }

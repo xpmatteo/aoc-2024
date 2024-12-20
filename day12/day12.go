@@ -74,6 +74,14 @@ func (rs RegionSet) perimeter(c mapping.Coord, id RegionId) int {
 }
 
 func (rs RegionSet) mergeRegionIds() {
+	more := true
+	for more {
+		more = rs.mergeIdsOnce()
+	}
+}
+
+func (rs RegionSet) mergeIdsOnce() bool {
+	more := false
 	rs.plot.ForEachCoord(func(c mapping.Coord, value int32) {
 		plant := Plant(value)
 		id := rs.regionIdOf(c)
@@ -85,10 +93,12 @@ func (rs RegionSet) mergeRegionIds() {
 					l := min(id, neighborId)
 					rs.setRegionId(c, l)
 					rs.setRegionId(neighbor, l)
+					more = true
 				}
 			}
 		}
 	})
+	return more
 }
 
 func (rs RegionSet) regionIdOf(c mapping.Coord) RegionId {
@@ -105,4 +115,12 @@ func (r Report) Strings() []string {
 		result = append(result, fmt.Sprintf("%c %d %d, ", line.plant, line.area, line.perimeter))
 	}
 	return result
+}
+
+func (r Report) TotalCost() int {
+	var total int
+	for _, line := range r {
+		total += line.area * line.perimeter
+	}
+	return total
 }
