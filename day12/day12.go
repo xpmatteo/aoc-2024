@@ -1,6 +1,9 @@
 package day12
 
-import "github.com/xpmatteo/aoc-2024/mapping"
+import (
+	"fmt"
+	"github.com/xpmatteo/aoc-2024/mapping"
+)
 
 type Plant int32
 
@@ -11,6 +14,7 @@ type RegionSet struct {
 
 type regionId int
 
+type Report []ReportLine
 type ReportLine struct {
 	plant     Plant
 	area      int
@@ -24,7 +28,7 @@ func NewRegionSet(plot mapping.Map) RegionSet {
 	}
 }
 
-func (rs RegionSet) Report() []ReportLine {
+func (rs RegionSet) Report() Report {
 	areas := make(map[Plant]int)
 	perims := make(map[Plant]int)
 	rs.plot.ForEachCoord(func(c mapping.Coord, value int32) {
@@ -39,6 +43,14 @@ func (rs RegionSet) Report() []ReportLine {
 			area:      area,
 			perimeter: perims[plant],
 		})
+	}
+	return result
+}
+
+func (r Report) Strings() []string {
+	var result []string
+	for _, line := range r {
+		result = append(result, fmt.Sprintf("%c %d %d, ", line.plant, line.area, line.perimeter))
 	}
 	return result
 }
