@@ -11,28 +11,10 @@ type RegionSet struct {
 
 type regionId int
 
-func (rs RegionSet) Add(id regionId, letter int32, coord mapping.Coord) RegionSet {
-	return rs
-}
-
-func (rs RegionSet) Area() int {
-	area := 0
-	rs.plot.ForEach(func(r int, c int, value int32) {
-		area++
-	})
-	return area
-}
-
-func (rs RegionSet) Perimeter() int {
-	var perimeter int
-	rs.plot.ForEachCoord(func(c mapping.Coord, value int32) {
-		for _, coord := range c.OrthoNeighbors() {
-			if rs.plot.At(coord) != 'A' {
-				perimeter++
-			}
-		}
-	})
-	return perimeter
+type ReportLine struct {
+	plant     Plant
+	area      int
+	perimeter int
 }
 
 func NewRegionSet(plot mapping.Map) RegionSet {
@@ -40,4 +22,34 @@ func NewRegionSet(plot mapping.Map) RegionSet {
 		regions: make(map[regionId][]mapping.Coord),
 		plot:    plot,
 	}
+}
+
+func (rs RegionSet) Report() []ReportLine {
+	areas := make(map[Plant]int)
+	perims := make(map[Plant]int)
+	rs.plot.ForEachCoord(func(c mapping.Coord, value int32) {
+		plant := Plant(value)
+		areas[plant] = areas[plant] + 1
+		perims[plant] = perims[plant] + rs.perimeter(c)
+	})
+	var result []ReportLine
+	for plant, area := range areas {
+		result = append(result, ReportLine{
+			plant:     plant,
+			area:      area,
+			perimeter: perims[plant],
+		})
+	}
+	return result
+}
+
+func (rs RegionSet) perimeter(c mapping.Coord) int {
+	var perimeter int
+	plant := rs.plot.At(c)
+	for _, coord := range c.OrthoNeighbors() {
+		if rs.plot.At(coord) != plant {
+			perimeter++
+		}
+	}
+	return perimeter
 }

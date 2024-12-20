@@ -9,28 +9,38 @@ import (
 //goland:noinspection GoStructInitializationWithoutFieldNames
 func Test_part1(t *testing.T) {
 	tests := []struct {
-		name                            string
-		plot                            mapping.Map
-		expectedArea, expectedPerimeter int
+		name     string
+		plot     mapping.Map
+		expected []ReportLine
 	}{
 		{
-			name:              "1x1",
-			plot:              mapping.Map{"A"},
-			expectedArea:      1,
-			expectedPerimeter: 4,
+			name:     "A",
+			plot:     mapping.Map{"A"},
+			expected: []ReportLine{{'A', 1, 4}},
 		},
 		{
-			name:              "2x1",
-			plot:              mapping.Map{"AA"},
-			expectedArea:      2,
-			expectedPerimeter: 6,
+			name:     "AA",
+			plot:     mapping.Map{"AA"},
+			expected: []ReportLine{{'A', 2, 6}},
+		},
+		{
+			name: "AA + AA",
+			plot: mapping.Map{
+				"AA",
+				"AA",
+			},
+			expected: []ReportLine{{'A', 4, 8}},
+		},
+		{
+			name:     "AB",
+			plot:     mapping.Map{"AB"},
+			expected: []ReportLine{{'A', 1, 4}, {'B', 1, 4}},
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			r := NewRegionSet(test.plot)
-			assert.Equal(t, test.expectedArea, r.Area())
-			assert.Equal(t, test.expectedPerimeter, r.Perimeter())
+			assert.Equal(t, test.expected, r.Report(), "area")
 		})
 	}
 }
