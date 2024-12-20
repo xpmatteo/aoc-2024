@@ -61,3 +61,18 @@ func (c Coord) NorthWest() Coord {
 		Col: c.Col - 1,
 	}
 }
+
+func (c Coord) NorthEast() Coord {
+	return Coord{
+		Row: c.Row - 1,
+		Col: c.Col + 1,
+	}
+
+}
+
+func (c Coord) SouthWest() Coord {
+	return Coord{
+		Row: c.Row + 1,
+		Col: c.Col - 1,
+	}
+}

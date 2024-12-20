@@ -151,51 +151,84 @@ AAAA
 BBCD
 BBCC
 EEEC`),
-			expected: Report{{'A', 4, 4}, {'B', 4, 4}, {'C', 4, 8}, {'D', 1, 4}, {'E', 3, 4}},
+			expected:          Report{{'A', 4, 4}, {'B', 4, 4}, {'C', 4, 8}, {'D', 1, 4}, {'E', 3, 4}},
+			expectedTotalCost: 80,
 		},
-		//		{
-		//			name: "second given example",
-		//			plot: mapping.ParseMap(`
-		//OOOOO
-		//OXOXO
-		//OOOOO
-		//OXOXO
-		//OOOOO`),
-		//			expected: Report{{'O', 21, 36}, {'X', 1, 4}, {'X', 1, 4}, {'X', 1, 4}, {'X', 1, 4}},
-		//		},
-		//		{
-		//			name: "third given example",
-		//			plot: mapping.ParseMap(`
-		//RRRRIICCFF
-		//RRRRIICCCF
-		//VVRRRCCFFF
-		//VVRCCCJFFF
-		//VVVVCJJCFE
-		//VVIVCCJJEE
-		//VVIIICJJEE
-		//MIIIIIJJEE
-		//MIIISIJEEE
-		//MMMISSJEEE`),
-		//			expected: Report{
-		//				{'R', 12, 18},
-		//				{'I', 4, 8},
-		//				{'C', 1, 4},
-		//				{'C', 14, 28},
-		//				{'F', 10, 18},
-		//				{'V', 13, 20},
-		//				{'J', 11, 20},
-		//				{'E', 13, 18},
-		//				{'I', 14, 22},
-		//				{'M', 5, 12},
-		//				{'S', 3, 8},
-		//			},
-		//			expectedTotalCost: 1930,
-		//		},
-		//		{
-		//			name:              "real",
-		//			plot:              mapping.ParseMap(day1.ReadFile("day12.txt")),
-		//			expectedTotalCost: 1370258,
-		//		},
+		{
+			name: "the window",
+			plot: mapping.ParseMap(`
+OOO
+OXO
+OOO`),
+			expected:          Report{{'O', 8, 8}, {'X', 1, 4}},
+			expectedTotalCost: 68,
+		},
+		{
+			name: "second given example",
+			plot: mapping.ParseMap(`
+OOOOO
+OXOXO
+OOOOO
+OXOXO
+OOOOO`),
+			expected:          Report{{'O', 21, 20}, {'X', 1, 4}, {'X', 1, 4}, {'X', 1, 4}, {'X', 1, 4}},
+			expectedTotalCost: 436,
+		},
+		{
+			name: "the E shape",
+			plot: mapping.ParseMap(`
+EEEEE
+EXXXX
+EEEEE
+EXXXX
+EEEEE`),
+			expected:          Report{{'E', 17, 12}, {'X', 4, 4}, {'X', 4, 4}},
+			expectedTotalCost: 236,
+		},
+		{
+			name: "the A B B A shape",
+			plot: mapping.ParseMap(`
+AAAAAA
+AAABBA
+AAABBA
+ABBAAA
+ABBAAA
+AAAAAA`),
+			expected: Report{{'A', 28, 12}, {'B', 4, 4}, {'B', 4, 4}},
+		},
+		{
+			name: "third given example",
+			plot: mapping.ParseMap(`
+RRRRIICCFF
+RRRRIICCCF
+VVRRRCCFFF
+VVRCCCJFFF
+VVVVCJJCFE
+VVIVCCJJEE
+VVIIICJJEE
+MIIIIIJJEE
+MIIISIJEEE
+MMMISSJEEE`),
+			expected: Report{
+				{'R', 12, 10},
+				{'I', 4, 4},
+				{'C', 14, 22},
+				{'F', 10, 12},
+				{'V', 13, 10},
+				{'J', 11, 12},
+				{'C', 1, 4},
+				{'E', 13, 8},
+				{'I', 14, 16},
+				{'M', 5, 6},
+				{'S', 3, 6},
+			},
+			expectedTotalCost: 1206,
+		},
+		{
+			name:              "real",
+			plot:              mapping.ParseMap(day1.ReadFile("day12.txt")),
+			expectedTotalCost: 805814,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

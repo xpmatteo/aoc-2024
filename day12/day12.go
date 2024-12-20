@@ -83,33 +83,30 @@ func (rs RegionSet) perimeterPart1(c mapping.Coord, id RegionId) int {
 	return perimeter
 }
 
+// I suspect this function is wrong bc it's not symmetric!
 func (rs RegionSet) perimeterPart2(c mapping.Coord, id RegionId) int {
 	var perimeter int
 	{
-		vertNeighbor := c.North()
 		alreadyCounted := rs.sameRegion(c.West(), id) && !rs.sameRegion(c.NorthWest(), id)
-		if !alreadyCounted && !(rs.sameRegion(vertNeighbor, id)) {
+		if !alreadyCounted && !(rs.sameRegion(c.North(), id)) {
 			perimeter++
 		}
 	}
 	{
-		vertNeighbor := c.South()
-		alreadyCounted := rs.sameRegion(c.West(), id)
-		if !alreadyCounted && !(rs.sameRegion(vertNeighbor, id)) {
+		alreadyCounted := rs.sameRegion(c.North(), id) && !rs.sameRegion(c.NorthEast(), id)
+		if !alreadyCounted && !(rs.sameRegion(c.East(), id)) {
 			perimeter++
 		}
 	}
 	{
-		horNeighbor := c.West()
+		alreadyCounted := rs.sameRegion(c.West(), id) && !rs.sameRegion(c.SouthWest(), id)
+		if !alreadyCounted && !(rs.sameRegion(c.South(), id)) {
+			perimeter++
+		}
+	}
+	{
 		alreadyCounted := rs.sameRegion(c.North(), id) && !rs.sameRegion(c.NorthWest(), id)
-		if !alreadyCounted && !(rs.sameRegion(horNeighbor, id)) {
-			perimeter++
-		}
-	}
-	{
-		horNeighbor := c.East()
-		alreadyCounted := rs.sameRegion(c.North(), id)
-		if !alreadyCounted && !(rs.sameRegion(horNeighbor, id)) {
+		if !alreadyCounted && !(rs.sameRegion(c.West(), id)) {
 			perimeter++
 		}
 	}
