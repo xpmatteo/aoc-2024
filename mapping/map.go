@@ -44,6 +44,14 @@ func (m Map) ForEach(f func(r int, c int, value int32)) {
 	}
 }
 
+func (m Map) ForEachCoord(f func(c Coord, value int32)) {
+	for r, row := range m {
+		for c, value := range row {
+			f(Coord{r, c}, value)
+		}
+	}
+}
+
 func (m Map) String() string {
 	return strings.Join(m, "\n")
 }
