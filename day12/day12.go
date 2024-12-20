@@ -3,16 +3,17 @@ package day12
 import (
 	"fmt"
 	"github.com/xpmatteo/aoc-2024/mapping"
+	"github.com/xpmatteo/aoc-2024/matrix"
 )
 
 type Plant int32
 
 type RegionSet struct {
-	regions map[regionId][]mapping.Coord
+	regions map[RegionId][]mapping.Coord
 	plot    mapping.Map
 }
 
-type regionId int
+type RegionId int
 
 type Report []ReportLine
 type ReportLine struct {
@@ -23,28 +24,50 @@ type ReportLine struct {
 
 func NewRegionSet(plot mapping.Map) RegionSet {
 	return RegionSet{
-		regions: make(map[regionId][]mapping.Coord),
+		regions: make(map[RegionId][]mapping.Coord),
 		plot:    plot,
 	}
 }
 
 func (rs RegionSet) Report() Report {
-	areas := make(map[Plant]int)
-	perims := make(map[Plant]int)
+	ids := rs.initRegionIds()
+	areas := make(map[RegionId]int)
+	perims := make(map[RegionId]int)
+	plants := make(map[RegionId]Plant)
 	rs.plot.ForEachCoord(func(c mapping.Coord, value int32) {
+		id := ids[c.Row][c.Col]
 		plant := Plant(value)
-		areas[plant] = areas[plant] + 1
-		perims[plant] = perims[plant] + rs.perimeter(c)
+		plants[id] = plant
+
+		areas[id] = areas[id] + 1
+
+		var perimeter int
+		for _, coord := range c.OrthoNeighbors() {
+			if !rs.plot.IsValid(coord) || ids[coord.Row][coord.Col] != id {
+				perimeter++
+			}
+		}
+		perims[id] = perims[id] + perimeter
 	})
 	var result []ReportLine
-	for plant, area := range areas {
+	for id, area := range areas {
 		result = append(result, ReportLine{
-			plant:     plant,
+			plant:     plants[id],
 			area:      area,
-			perimeter: perims[plant],
+			perimeter: perims[id],
 		})
 	}
 	return result
+}
+
+func (rs RegionSet) initRegionIds() [][]RegionId {
+	ids := matrix.New[RegionId](rs.plot.Rows(), rs.plot.Cols())
+	i := 0
+	rs.plot.ForEach(func(r int, c int, value int32) {
+		i++
+		ids[r][c] = RegionId(i)
+	})
+	return ids
 }
 
 func (r Report) Strings() []string {
@@ -53,15 +76,4 @@ func (r Report) Strings() []string {
 		result = append(result, fmt.Sprintf("%c %d %d, ", line.plant, line.area, line.perimeter))
 	}
 	return result
-}
-
-func (rs RegionSet) perimeter(c mapping.Coord) int {
-	var perimeter int
-	plant := rs.plot.At(c)
-	for _, coord := range c.OrthoNeighbors() {
-		if rs.plot.At(coord) != plant {
-			perimeter++
-		}
-	}
-	return perimeter
 }
