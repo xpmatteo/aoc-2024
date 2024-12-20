@@ -63,19 +63,23 @@ func (s Stone) String() string {
 
 func (s Stone) LeftHalf() Stone {
 	str := s.String()
-	return Stone(day1.Atoi(str[:len(str)/2]))
+	return stoneFrom(str[:len(str)/2])
 }
 
 func (s Stone) RightHalf() Stone {
 	str := s.String()
-	return Stone(day1.Atoi(str[len(str)/2:]))
+	return stoneFrom(str[len(str)/2:])
 }
 
 func parseStones(input string) StoneList {
 	result := make(StoneList)
 	split := strings.Split(input, " ")
 	for _, str := range split {
-		result.Add(Stone(day1.Atoi(str)), 1)
+		result.Add(stoneFrom(str), 1)
 	}
 	return result
+}
+
+func stoneFrom(str string) Stone {
+	return Stone(day1.Atoi(str))
 }
