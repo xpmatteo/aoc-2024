@@ -23,10 +23,12 @@ type ReportLine struct {
 }
 
 func NewRegionSet(plot mapping.Map) RegionSet {
-	return RegionSet{
+	rs := RegionSet{
 		ids:  initRegionIds(plot),
 		plot: plot,
 	}
+	rs.mergeRegionIds()
+	return rs
 }
 
 func initRegionIds(plot mapping.Map) [][]RegionId {
@@ -49,18 +51,15 @@ func (rs RegionSet) ReportPart2() Report {
 	return rs.ReportFunc(perimeterF)
 }
 
-func (rs RegionSet) ReportFunc(perimeterF func(c mapping.Coord, id RegionId) int) Report {
-	rs.mergeRegionIds()
+func (rs RegionSet) ReportFunc(perimF func(c mapping.Coord, id RegionId) int) Report {
 	areas := make(map[RegionId]int)
 	perims := make(map[RegionId]int)
 	plants := make(map[RegionId]Plant)
 	rs.plot.ForEachCoord(func(c mapping.Coord, value int32) {
 		id := rs.ids[c.Row][c.Col]
-		plant := Plant(value)
-		plants[id] = plant
+		plants[id] = Plant(value)
 		areas[id] = areas[id] + 1
-		perimeter := perimeterF(c, id)
-		perims[id] = perims[id] + perimeter
+		perims[id] = perims[id] + perimF(c, id)
 	})
 	var result []ReportLine
 	for id, area := range areas {
@@ -76,7 +75,7 @@ func (rs RegionSet) ReportFunc(perimeterF func(c mapping.Coord, id RegionId) int
 func (rs RegionSet) perimeterPart1(c mapping.Coord, id RegionId) int {
 	var perimeter int
 	for _, coord := range c.OrthoNeighbors() {
-		if !rs.plot.IsValid(coord) || rs.ids[coord.Row][coord.Col] != id {
+		if !rs.isValid(coord) || rs.ids[coord.Row][coord.Col] != id {
 			perimeter++
 		}
 	}
@@ -88,25 +87,25 @@ func (rs RegionSet) perimeterPart2(c mapping.Coord, id RegionId) int {
 	var perimeter int
 	{
 		alreadyCounted := rs.sameRegion(c.West(), id) && !rs.sameRegion(c.NorthWest(), id)
-		if !alreadyCounted && !(rs.sameRegion(c.North(), id)) {
+		if !alreadyCounted && !rs.sameRegion(c.North(), id) {
 			perimeter++
 		}
 	}
 	{
 		alreadyCounted := rs.sameRegion(c.North(), id) && !rs.sameRegion(c.NorthEast(), id)
-		if !alreadyCounted && !(rs.sameRegion(c.East(), id)) {
+		if !alreadyCounted && !rs.sameRegion(c.East(), id) {
 			perimeter++
 		}
 	}
 	{
 		alreadyCounted := rs.sameRegion(c.West(), id) && !rs.sameRegion(c.SouthWest(), id)
-		if !alreadyCounted && !(rs.sameRegion(c.South(), id)) {
+		if !alreadyCounted && !rs.sameRegion(c.South(), id) {
 			perimeter++
 		}
 	}
 	{
 		alreadyCounted := rs.sameRegion(c.North(), id) && !rs.sameRegion(c.NorthWest(), id)
-		if !alreadyCounted && !(rs.sameRegion(c.West(), id)) {
+		if !alreadyCounted && !rs.sameRegion(c.West(), id) {
 			perimeter++
 		}
 	}
@@ -114,7 +113,7 @@ func (rs RegionSet) perimeterPart2(c mapping.Coord, id RegionId) int {
 }
 
 func (rs RegionSet) sameRegion(c mapping.Coord, id RegionId) bool {
-	return rs.plot.IsValid(c) && rs.idOf(c) == id
+	return rs.isValid(c) && rs.idOf(c) == id
 }
 
 func (rs RegionSet) idOf(c mapping.Coord) RegionId {
@@ -131,22 +130,25 @@ func (rs RegionSet) mergeRegionIds() {
 func (rs RegionSet) mergeIdsOnce() bool {
 	more := false
 	rs.plot.ForEachCoord(func(c mapping.Coord, value int32) {
-		plant := Plant(value)
 		id := rs.regionIdOf(c)
 		for _, neighbor := range c.OrthoNeighbors() {
-			if rs.plot.IsValid(neighbor) {
+			if rs.isValid(neighbor) {
 				neighborPlant := Plant(rs.plot.At(neighbor))
 				neighborId := rs.regionIdOf(neighbor)
-				if plant == neighborPlant && id != neighborId {
-					l := min(id, neighborId)
-					rs.setRegionId(c, l)
-					rs.setRegionId(neighbor, l)
+				if Plant(value) == neighborPlant && id != neighborId {
+					least := min(id, neighborId)
+					rs.setRegionId(c, least)
+					rs.setRegionId(neighbor, least)
 					more = true
 				}
 			}
 		}
 	})
 	return more
+}
+
+func (rs RegionSet) isValid(neighbor mapping.Coord) bool {
+	return rs.plot.IsValid(neighbor)
 }
 
 func (rs RegionSet) regionIdOf(c mapping.Coord) RegionId {
