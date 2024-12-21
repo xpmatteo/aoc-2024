@@ -1,6 +1,13 @@
 package day13
 
-import "math"
+import (
+	"fmt"
+	"github.com/samber/lo"
+	"github.com/xpmatteo/aoc-2024/day1"
+	"math"
+	"regexp"
+	"strings"
+)
 
 type Point struct{ x, y int }
 
@@ -25,7 +32,7 @@ type Button struct {
 
 type Machine struct {
 	buttonA, buttonB Button
-	prizePoint       Point
+	prize            Point
 }
 
 const maxPushes = 100
@@ -36,7 +43,7 @@ func (m *Machine) tokensNeededToWin() int {
 	for pushA := range maxPushes {
 		for pushB := range maxPushes {
 			tokensSpent := m.attemptToWIn(pushA, pushB)
-			if tokensSpent != noWin && tokensSpent < minTokens {
+			if tokensSpent < minTokens {
 				minTokens = tokensSpent
 			}
 		}
@@ -47,10 +54,23 @@ func (m *Machine) tokensNeededToWin() int {
 func (m *Machine) attemptToWIn(a int, b int) int {
 	pa := m.buttonA.advance.times(a)
 	pb := m.buttonB.advance.times(b)
-	if pa.plus(pb) == m.prizePoint {
+	if pa.plus(pb) == m.prize {
 		return a*m.buttonA.tokens + b*m.buttonB.tokens
 	}
 	return noWin
+}
+
+func (m *Machine) String() string {
+	format := `
+Button A: X+%d, Y+%d
+Button B: X+%d, Y+%d
+Prize: X=%d, Y=%d`
+
+	return fmt.Sprintf(format,
+		m.buttonA.advance.x, m.buttonA.advance.x,
+		m.buttonB.advance.x, m.buttonB.advance.x,
+		m.prize.x, &m.prize.y,
+	)
 }
 
 type MachineList []Machine
@@ -58,11 +78,45 @@ type MachineList []Machine
 func (l MachineList) tokensNeeded() int {
 	var tokensTotal int
 	for _, machine := range l {
-		tokensTotal += machine.tokensNeededToWin()
+		tokens := machine.tokensNeededToWin()
+		if tokens != noWin {
+			tokensTotal += tokens
+		}
 	}
 	return tokensTotal
 }
 
+func (l MachineList) String() string {
+	ss := lo.Map(l, func(m Machine, index int) string { return m.String() })
+	return strings.Join(ss, "\n\n")
+}
+
 func parseMachineList(s string) MachineList {
-	return nil
+	split := strings.Split(s, "\n\n")
+	return lo.Map(split, func(item string, index int) Machine {
+		return parseOneMachine(item)
+	})
+}
+
+func parseOneMachine(s string) Machine {
+	re := regexp.MustCompile(`\d+`)
+	matches := re.FindAllString(s, -1)
+	if len(matches) != 6 {
+		panic(fmt.Sprintf("Unexpected # of numbers: %v", matches))
+	}
+	numbers := lo.Map(matches, func(s string, index int) int {
+		return day1.Atoi(s)
+	})
+
+	return Machine{
+		buttonA: Button{
+			tokens:  3,
+			advance: Point{numbers[0], numbers[1]},
+		},
+		buttonB: Button{
+			tokens:  1,
+			advance: Point{numbers[2], numbers[3]},
+		},
+		prize: Point{numbers[4], numbers[5]},
+	}
 }
