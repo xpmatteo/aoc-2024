@@ -51,17 +51,17 @@ func Test_part1(t *testing.T) {
 			input: parseMachineList(`
 Button A: X+94, Y+34
 Button B: X+22, Y+67
-Prize: X=8400, Y=5400`),
+Prize: X=8400, Y=5400`, 0),
 			expectedTokens: 280,
 		},
 		{
 			name:           "sample",
-			input:          parseMachineList(sample),
+			input:          parseMachineList(sample, 0),
 			expectedTokens: 480,
 		},
 		{
 			name:           "real",
-			input:          parseMachineList(day1.ReadFile("day13.txt")),
+			input:          parseMachineList(day1.ReadFile("day13.txt"), 0),
 			expectedTokens: 30413,
 		},
 	}
@@ -73,17 +73,45 @@ Prize: X=8400, Y=5400`),
 	}
 }
 
+func Test_part2(t *testing.T) {
+	const addition = 10_000_000_000_000
+	tests := []struct {
+		name           string
+		input          MachineList
+		expectedTokens int
+	}{
+		{
+			name:           "sample",
+			input:          parseMachineList(sample, addition),
+			expectedTokens: 480,
+		},
+		{
+			name:           "real",
+			input:          parseMachineList(day1.ReadFile("day13.txt"), addition),
+			expectedTokens: 30413,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ml := test.input
+			actual := ml.tokensNeeded()
+			assert.Equal(t, test.expectedTokens, actual)
+		})
+	}
+}
+
+// x*94+y*22=8400
 func Test_parseMachineList(t *testing.T) {
 	ml := parseMachineList(`
 Button A: X+94, Y+34
 Button B: X+22, Y+67
-Prize: X=8400, Y=5400`)
+Prize: X=8400, Y=5400`, 10000)
 
 	assert.Equal(t, ml, MachineList{
 		Machine{
 			buttonA: Button{tokens: 3, advance: Point{94, 34}},
 			buttonB: Button{tokens: 1, advance: Point{22, 67}},
-			prize:   Point{8400, 5400},
+			prize:   Point{18400, 15400},
 		},
 	}, ml.String())
 }

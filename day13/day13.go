@@ -25,6 +25,11 @@ func (p Point) times(n int) Point {
 	}
 }
 
+func (p Point) increaseBy(point Point) {
+	p.x += point.x
+	p.y += point.y
+}
+
 type Button struct {
 	tokens  int
 	advance Point
@@ -91,14 +96,14 @@ func (l MachineList) String() string {
 	return strings.Join(ss, "\n\n")
 }
 
-func parseMachineList(s string) MachineList {
+func parseMachineList(s string, prizeOffset int) MachineList {
 	split := strings.Split(s, "\n\n")
 	return lo.Map(split, func(item string, index int) Machine {
-		return parseOneMachine(item)
+		return parseOneMachine(item, prizeOffset)
 	})
 }
 
-func parseOneMachine(s string) Machine {
+func parseOneMachine(s string, offset int) Machine {
 	re := regexp.MustCompile(`\d+`)
 	matches := re.FindAllString(s, -1)
 	if len(matches) != 6 {
@@ -117,6 +122,6 @@ func parseOneMachine(s string) Machine {
 			tokens:  1,
 			advance: Point{numbers[2], numbers[3]},
 		},
-		prize: Point{numbers[4], numbers[5]},
+		prize: Point{numbers[4] + offset, numbers[5] + offset},
 	}
 }
