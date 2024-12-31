@@ -52,10 +52,10 @@ func Test_parseLobby(t *testing.T) {
 }
 
 /*
-	tests
-	- 2 robots moving
+	----- tests ----
+	X 2 robots moving
 	- 2 robots in the same tile
-	- wrap around
+	X wrap around
 */
 
 func Test_movement(t *testing.T) {
@@ -74,6 +74,30 @@ func Test_movement(t *testing.T) {
 				"...........",
 				".1.........",
 				"...........",
+			},
+		},
+		{
+			name:    "wrap around",
+			input:   parseLobby(point{11, 4}, "p=0,0 v=1,2"),
+			seconds: 2,
+			expected: mapping.Map{
+				"..1........",
+				"...........",
+				"...........",
+				"...........",
+			},
+		},
+		{
+			name: "2 robots",
+			input: parseLobby(point{11, 4},
+				"p=0,0 v=1,2\n"+
+					"p=0,0 v=-1,-1\n"),
+			seconds: 1,
+			expected: mapping.Map{
+				"...........",
+				"...........",
+				".1.........",
+				"..........1",
 			},
 		},
 	}

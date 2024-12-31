@@ -28,8 +28,18 @@ type Lobby struct {
 }
 
 func (l *Lobby) Simulate(seconds int) {
-	for _, robot := range l.robots {
-		robot.position = robot.position.Plus(robot.speed)
+	for range seconds {
+		for _, robot := range l.robots {
+			robot.position = robot.position.Plus(robot.speed)
+			for robot.position.X < 0 {
+				robot.position.X += l.size.X
+			}
+			for robot.position.Y < 0 {
+				robot.position.Y += l.size.Y
+			}
+			robot.position.X = robot.position.X % l.size.X
+			robot.position.Y = robot.position.Y % l.size.Y
+		}
 	}
 }
 
@@ -54,9 +64,12 @@ func split(input string) []string {
 
 func parseLobby(size point, input string) Lobby {
 	lines := split(input)
-	robots := lo.Map(lines, func(item string, index int) *Robot {
-		return parseRobot(item)
-	})
+	var robots []*Robot
+	for _, line := range lines {
+		if len(line) > 0 {
+			robots = append(robots, parseRobot(line))
+		}
+	}
 	return Lobby{
 		robots: robots,
 		size:   size,
