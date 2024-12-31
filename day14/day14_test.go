@@ -2,6 +2,7 @@ package day14
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/xpmatteo/aoc-2024/day1"
 	"github.com/xpmatteo/aoc-2024/mapping"
 	"testing"
 )
@@ -144,6 +145,12 @@ func Test_simulation(t *testing.T) {
 			},
 			expectedSafetyFactor: 12,
 		},
+		{
+			name:                 "real",
+			input:                parseLobby(point{101, 103}, day1.ReadFile("day14.txt")),
+			seconds:              100,
+			expectedSafetyFactor: 221616000,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -152,7 +159,9 @@ func Test_simulation(t *testing.T) {
 			if test.expectedSafetyFactor > 0 {
 				assert.Equal(t, test.expectedSafetyFactor, lobby.SafetyFactor())
 			}
-			assert.Equal(t, test.expected.String(), lobby.Map().String())
+			if test.expected != nil {
+				assert.Equal(t, test.expected.String(), lobby.Map().String())
+			}
 		})
 	}
 }
