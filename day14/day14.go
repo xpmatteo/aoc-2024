@@ -51,15 +51,15 @@ func (l *Lobby) Map() mapping.Map {
 	lines = strings.TrimRight(lines, "\n")
 	m := mapping.Map(split(lines))
 	for _, robot := range l.robots {
-		m.Set(robot.position.Y, robot.position.X, '0'+mat[robot.position.Y][robot.position.X])
+		m.Set(robot.position.Y, robot.position.X, '0'+mat[robot.position.X][robot.position.Y])
 	}
 	return m
 }
 
 func (l *Lobby) Matrix() [][]int32 {
-	mat := matrix.New[int32](l.size.Y, l.size.X)
+	mat := matrix.New[int32](l.size.X, l.size.Y)
 	for _, robot := range l.robots {
-		mat[robot.position.Y][robot.position.X]++
+		mat[robot.position.X][robot.position.Y]++
 	}
 	return mat
 }
@@ -72,16 +72,16 @@ func (l *Lobby) SafetyFactor() int {
 	for x := range l.size.X {
 		for y := range l.size.Y {
 			if x < midX && y < midY {
-				q0 += mat[y][x]
+				q0 += mat[x][y]
 			}
 			if x < midX && y > midY {
-				q1 += mat[y][x]
+				q1 += mat[x][y]
 			}
 			if x > midX && y > midY {
-				q2 += mat[y][x]
+				q2 += mat[x][y]
 			}
 			if x > midX && y < midY {
-				q3 += mat[y][x]
+				q3 += mat[x][y]
 			}
 		}
 	}
