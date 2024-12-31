@@ -2,6 +2,7 @@ package day15
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/xpmatteo/aoc-2024/day1"
 	"github.com/xpmatteo/aoc-2024/mapping"
 	"testing"
 )
@@ -28,19 +29,47 @@ const smallSampleSolution = `
 #...O..#
 ########`
 
+const largeSampleMap = `
+##########
+#..O..O.O#
+#......O.#
+#.OO..O.O#
+#..O@..O.#
+#O#..O...#
+#O..O..O.#
+#.OO.O.OO#
+#....O...#
+##########`
+
+const largeSampleMoves = `
+<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^
+vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
+><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<
+<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^
+^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><
+^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^
+>^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
+<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
+^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
+v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^`
+
+const largeSampleSolution = `
+##########
+#.O.O.OOO#
+#........#
+#OO......#
+#OO@.....#
+#O#.....O#
+#O.....OO#
+#O.....OO#
+#OO....OO#
+##########`
+
 func Test_parseMoves(t *testing.T) {
 	assert.Equal(t, []Move{moveUp, moveDown, moveLeft, moveRight}, parseMoves("^v<>"))
+	assert.Equal(t, []Move{moveUp, moveDown}, parseMoves("^\nv"))
 }
 
-/*
-tests
-X move right
-X move left
-- move down
-X move right blocked by wall
-- move right blocked by box and wall
-- move right pushing box
-*/
 func Test_part1(t *testing.T) {
 	tests := []struct {
 		name             string
@@ -119,17 +148,66 @@ func Test_part1(t *testing.T) {
 				"#..@OOO#",
 			},
 		},
-		//{
-		//	name:        "sample",
-		//	inputMap:    mapping.ParseMap(smallSampleMap),
-		//	inputMoves:  parseMoves(smallSampleMoves),
-		//	expectedMap: mapping.ParseMap(smallSampleSolution),
-		//},
+		{
+			name: "move left pushing multiple boxes",
+			inputMap: mapping.Map{
+				"#..OOO@#",
+			},
+			inputMoves: parseMoves("<"),
+			expectedMap: mapping.Map{
+				"#.OOO@.#",
+			},
+		},
+		{
+			name: "multiple moves",
+			inputMap: mapping.Map{
+				"#...@#",
+			},
+			inputMoves: parseMoves("<<"),
+			expectedMap: mapping.Map{
+				"#.@..#",
+			},
+		},
+		{
+			name: "multiple moves with boxes",
+			inputMap: mapping.Map{
+				"#...OOO@#",
+			},
+			inputMoves: parseMoves("<<<<<>>>>"),
+			expectedMap: mapping.Map{
+				"#OOO...@#",
+			},
+		},
+		{
+			name:             "small sample",
+			inputMap:         mapping.ParseMap(smallSampleMap),
+			inputMoves:       parseMoves(smallSampleMoves),
+			expectedMap:      mapping.ParseMap(smallSampleSolution),
+			expectedGpsTotal: 2028,
+		},
+		{
+			name:             "large sample",
+			inputMap:         mapping.ParseMap(largeSampleMap),
+			inputMoves:       parseMoves(largeSampleMoves),
+			expectedMap:      mapping.ParseMap(largeSampleSolution),
+			expectedGpsTotal: 10092,
+		},
+		{
+			name:             "real",
+			inputMap:         mapping.ParseMap(day1.ReadFile("day15-map.txt")),
+			inputMoves:       parseMoves(day1.ReadFile("day15-moves.txt")),
+			expectedGpsTotal: 1,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			solvedMap := predictRobot(test.inputMap, test.inputMoves)
-			assert.Equal(t, test.expectedMap.String(), solvedMap.String())
+			if test.expectedGpsTotal > 0 {
+				assert.Equal(t, test.expectedGpsTotal, gpsTotal(solvedMap))
+			}
+			if test.expectedMap != nil {
+				assert.Equal(t, test.expectedMap.String(), solvedMap.String())
+			}
 		})
 	}
 }
