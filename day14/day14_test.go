@@ -69,16 +69,17 @@ func Test_parseLobby(t *testing.T) {
 	X 2 robots moving
 	X 2 robots in the same tile
 	X wrap around
-	- sample simulation
-	- find best quadrant
+	X sample simulation
+	- find safety factor
 */
 
 func Test_simulation(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    Lobby
-		seconds  int
-		expected mapping.Map
+		name                 string
+		input                Lobby
+		seconds              int
+		expected             mapping.Map
+		expectedSafetyFactor int
 	}{
 		{
 			name:    "one robot",
@@ -141,12 +142,16 @@ func Test_simulation(t *testing.T) {
 				"...12......",
 				".1....1....",
 			},
+			expectedSafetyFactor: 12,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			lobby := test.input
 			lobby.Simulate(test.seconds)
+			if test.expectedSafetyFactor > 0 {
+				assert.Equal(t, test.expectedSafetyFactor, lobby.SafetyFactor())
+			}
 			assert.Equal(t, test.expected.String(), lobby.Map().String())
 		})
 	}

@@ -45,10 +45,7 @@ func (l *Lobby) Simulate(seconds int) {
 }
 
 func (l *Lobby) Map() mapping.Map {
-	mat := matrix.New[int32](l.size.Y, l.size.X)
-	for _, robot := range l.robots {
-		mat[robot.position.Y][robot.position.X]++
-	}
+	mat := l.Matrix()
 	line := strings.Repeat(".", l.size.X)
 	lines := strings.Repeat(line+"\n", l.size.Y)
 	lines = strings.TrimRight(lines, "\n")
@@ -57,6 +54,38 @@ func (l *Lobby) Map() mapping.Map {
 		m.Set(robot.position.Y, robot.position.X, '0'+mat[robot.position.Y][robot.position.X])
 	}
 	return m
+}
+
+func (l *Lobby) Matrix() [][]int32 {
+	mat := matrix.New[int32](l.size.Y, l.size.X)
+	for _, robot := range l.robots {
+		mat[robot.position.Y][robot.position.X]++
+	}
+	return mat
+}
+
+func (l *Lobby) SafetyFactor() int {
+	var q0, q1, q2, q3 int32
+	mat := l.Matrix()
+	midX := l.size.X / 2
+	midY := l.size.Y / 2
+	for x := range l.size.X {
+		for y := range l.size.Y {
+			if x < midX && y < midY {
+				q0 += mat[y][x]
+			}
+			if x < midX && y > midY {
+				q1 += mat[y][x]
+			}
+			if x > midX && y > midY {
+				q2 += mat[y][x]
+			}
+			if x > midX && y < midY {
+				q3 += mat[y][x]
+			}
+		}
+	}
+	return int(q0 * q1 * q2 * q3)
 }
 
 func join(s ...string) string {
