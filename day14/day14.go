@@ -6,6 +6,7 @@ import (
 	"github.com/xpmatteo/aoc-2024/day1"
 	"github.com/xpmatteo/aoc-2024/day13"
 	"github.com/xpmatteo/aoc-2024/mapping"
+	"github.com/xpmatteo/aoc-2024/matrix"
 	"regexp"
 	"strings"
 )
@@ -44,12 +45,16 @@ func (l *Lobby) Simulate(seconds int) {
 }
 
 func (l *Lobby) Map() mapping.Map {
+	mat := matrix.New[int32](l.size.Y, l.size.X)
+	for _, robot := range l.robots {
+		mat[robot.position.Y][robot.position.X]++
+	}
 	line := strings.Repeat(".", l.size.X)
 	lines := strings.Repeat(line+"\n", l.size.Y)
 	lines = strings.TrimRight(lines, "\n")
 	m := mapping.Map(split(lines))
 	for _, robot := range l.robots {
-		m.Set(robot.position.Y, robot.position.X, '1')
+		m.Set(robot.position.Y, robot.position.X, '0'+mat[robot.position.Y][robot.position.X])
 	}
 	return m
 }

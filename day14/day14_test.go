@@ -6,6 +6,19 @@ import (
 	"testing"
 )
 
+const sample = `p=0,4 v=3,-3
+p=6,3 v=-1,-3
+p=10,3 v=-1,2
+p=2,0 v=2,-1
+p=0,0 v=1,3
+p=3,0 v=-2,-2
+p=7,6 v=-1,-3
+p=3,0 v=-1,-2
+p=9,3 v=2,3
+p=7,3 v=-1,2
+p=2,4 v=2,-3
+p=9,5 v=-3,-3`
+
 func Test_parseLobby(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -54,11 +67,13 @@ func Test_parseLobby(t *testing.T) {
 /*
 	----- tests ----
 	X 2 robots moving
-	- 2 robots in the same tile
+	X 2 robots in the same tile
 	X wrap around
+	- sample simulation
+	- find best quadrant
 */
 
-func Test_movement(t *testing.T) {
+func Test_simulation(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    Lobby
@@ -100,12 +115,39 @@ func Test_movement(t *testing.T) {
 				"..........1",
 			},
 		},
+		{
+			name: "2 robots in the same tile",
+			input: parseLobby(point{11, 4},
+				"p=0,0 v=1,2\n"+
+					"p=0,0 v=1,2\n"),
+			seconds: 1,
+			expected: mapping.Map{
+				"...........",
+				"...........",
+				".2.........",
+				"...........",
+			},
+		},
+		{
+			name:    "sample 100",
+			input:   parseLobby(point{11, 7}, sample),
+			seconds: 100,
+			expected: mapping.Map{
+				"......2..1.",
+				"...........",
+				"1..........",
+				".11........",
+				".....1.....",
+				"...12......",
+				".1....1....",
+			},
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			lobby := test.input
 			lobby.Simulate(test.seconds)
-			assert.Equal(t, test.expected, lobby.Map())
+			assert.Equal(t, test.expected.String(), lobby.Map().String())
 		})
 	}
 }
