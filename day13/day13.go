@@ -9,25 +9,25 @@ import (
 	"strings"
 )
 
-type Point struct{ x, y int }
+type Point struct{ X, Y int }
 
-func (p Point) plus(point Point) Point {
+func (p Point) Plus(point Point) Point {
 	return Point{
-		x: p.x + point.x,
-		y: p.y + point.y,
+		X: p.X + point.X,
+		Y: p.Y + point.Y,
 	}
 }
 
 func (p Point) times(n int) Point {
 	return Point{
-		x: p.x * n,
-		y: p.y * n,
+		X: p.X * n,
+		Y: p.Y * n,
 	}
 }
 
 func (p Point) increaseBy(point Point) {
-	p.x += point.x
-	p.y += point.y
+	p.X += point.X
+	p.Y += point.Y
 }
 
 type Button struct {
@@ -44,6 +44,11 @@ const maxPushes = 100
 const noWin = math.MaxInt
 
 func (m *Machine) tokensNeededToWin() int {
+	/*
+	   pushA * a.X
+
+	*/
+
 	var minTokens = math.MaxInt
 	for pushA := range maxPushes {
 		for pushB := range maxPushes {
@@ -59,7 +64,7 @@ func (m *Machine) tokensNeededToWin() int {
 func (m *Machine) attemptToWIn(a int, b int) int {
 	pa := m.buttonA.advance.times(a)
 	pb := m.buttonB.advance.times(b)
-	if pa.plus(pb) == m.prize {
+	if pa.Plus(pb) == m.prize {
 		return a*m.buttonA.tokens + b*m.buttonB.tokens
 	}
 	return noWin
@@ -72,9 +77,9 @@ Button B: X+%d, Y+%d
 Prize: X=%d, Y=%d`
 
 	return fmt.Sprintf(format,
-		m.buttonA.advance.x, m.buttonA.advance.x,
-		m.buttonB.advance.x, m.buttonB.advance.x,
-		m.prize.x, &m.prize.y,
+		m.buttonA.advance.X, m.buttonA.advance.X,
+		m.buttonB.advance.X, m.buttonB.advance.X,
+		m.prize.X, &m.prize.Y,
 	)
 }
 

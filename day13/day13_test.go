@@ -100,7 +100,7 @@ func Test_part2(t *testing.T) {
 	}
 }
 
-// x*94+y*22=8400
+// X*94+Y*22=8400
 func Test_parseMachineList(t *testing.T) {
 	ml := parseMachineList(`
 Button A: X+94, Y+34
