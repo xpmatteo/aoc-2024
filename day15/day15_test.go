@@ -244,3 +244,144 @@ func Test_enlarge(t *testing.T) {
 		})
 	}
 }
+
+func Test_part2(t *testing.T) {
+	tests := []struct {
+		name             string
+		inputMap         mapping.Map
+		inputMoves       []Move
+		expectedMap      mapping.Map
+		expectedGpsTotal int
+	}{
+		{
+			name: "move right pushing a box",
+			inputMap: mapping.Map{
+				"#.@[]..#",
+			},
+			inputMoves: parseMoves(">"),
+			expectedMap: mapping.Map{
+				"#..@[].#",
+			},
+		},
+		{
+			name: "move up pushing a box from the left side",
+			inputMap: mapping.Map{
+				"########",
+				"#......#",
+				"#..[]..#",
+				"#..@...#",
+			},
+			inputMoves: parseMoves("^"),
+			expectedMap: mapping.Map{
+				"########",
+				"#..[]..#",
+				"#..@...#",
+				"#......#",
+			},
+		},
+		{
+			name: "move up pushing a box from the right side",
+			inputMap: mapping.Map{
+				"########",
+				"#......#",
+				"#..[]..#",
+				"#...@..#",
+			},
+			inputMoves: parseMoves("^"),
+			expectedMap: mapping.Map{
+				"########",
+				"#..[]..#",
+				"#...@..#",
+				"#......#",
+			},
+		},
+		{
+			name: "move up pushing a box from the left side partially blocked",
+			inputMap: mapping.Map{
+				"########",
+				"#...#..#",
+				"#..[]..#",
+				"#..@...#",
+			},
+			inputMoves: parseMoves("^"),
+			expectedMap: mapping.Map{
+				"########",
+				"#...#..#",
+				"#..[]..#",
+				"#..@...#",
+			},
+		},
+		{
+			name: "move up with chain of blocked boxes",
+			inputMap: mapping.Map{
+				"########",
+				"#...#..#",
+				"#...[].#",
+				"#..[]..#",
+				"#..@...#",
+			},
+			inputMoves: parseMoves("^"),
+			expectedMap: mapping.Map{
+				"########",
+				"#...#..#",
+				"#...[].#",
+				"#..[]..#",
+				"#..@...#",
+			},
+		},
+		{
+			name: "example",
+			inputMap: mapping.ParseMap(`
+##############
+##......##..##
+##..........##
+##....[][]@.##
+##....[]....##
+##..........##
+##############`),
+			inputMoves: parseMoves("<vv<<^^<<^^"),
+			expectedMap: mapping.ParseMap(`
+##############
+##...[].##..##
+##...@.[]...##
+##....[]....##
+##..........##
+##..........##
+##############`),
+		},
+		{
+			name:       "large sample",
+			inputMap:   enlarge(mapping.ParseMap(largeSampleMap)),
+			inputMoves: parseMoves(largeSampleMoves),
+			expectedMap: mapping.ParseMap(`
+####################
+##[].......[].[][]##
+##[]...........[].##
+##[]........[][][]##
+##[]......[]....[]##
+##..##......[]....##
+##..[]............##
+##..@......[].[][]##
+##......[][]..[]..##
+####################`),
+			expectedGpsTotal: 9021,
+		},
+		{
+			name:             "real",
+			inputMap:         enlarge(mapping.ParseMap(day1.ReadFile("day15-map.txt"))),
+			inputMoves:       parseMoves(day1.ReadFile("day15-moves.txt")),
+			expectedGpsTotal: 1392847,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			solvedMap := predictRobot(test.inputMap, test.inputMoves)
+			if test.expectedGpsTotal > 0 {
+				assert.Equal(t, test.expectedGpsTotal, gpsTotal(solvedMap))
+			}
+			if test.expectedMap != nil {
+				assert.Equal(t, test.expectedMap.String(), solvedMap.String())
+			}
+		})
+	}
+}

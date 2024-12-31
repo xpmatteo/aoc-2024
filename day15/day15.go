@@ -8,10 +8,11 @@ import (
 type Move int32
 
 const (
-	moveUp         = '^'
-	moveRight      = '>'
-	moveDown       = 'v'
-	moveLeft       = '<'
+	moveUp    = '^'
+	moveRight = '>'
+	moveDown  = 'v'
+	moveLeft  = '<'
+
 	objectNone     = '.'
 	objectRobot    = '@'
 	objectWall     = '#'
@@ -28,27 +29,54 @@ func predictRobot(inputMap mapping.Map, moves []Move) mapping.Map {
 	return inputMap
 }
 
-func attemptMove(inputMap mapping.Map, move Move, oldPos mapping.Coord) (succeed bool, newPos mapping.Coord) {
+func nextPos(oldPos mapping.Coord, move Move) mapping.Coord {
+	var result mapping.Coord
 	switch move {
 	case moveRight:
-		newPos = oldPos.East()
+		result = oldPos.East()
 	case moveLeft:
-		newPos = oldPos.West()
+		result = oldPos.West()
 	case moveUp:
-		newPos = oldPos.North()
+		result = oldPos.North()
 	case moveDown:
-		newPos = oldPos.South()
+		result = oldPos.South()
 	default:
 		panic("unknown move: " + string(move))
 	}
-	if inputMap.At(newPos) == objectWall {
+	return result
+}
+
+func attemptMove(inputMap mapping.Map, move Move, oldPos mapping.Coord) (succeed bool, newPos mapping.Coord) {
+	newPos = nextPos(oldPos, move)
+	objectAtNewPos := inputMap.At(newPos)
+	if objectAtNewPos == objectWall {
 		succeed = false
 		newPos = oldPos
 		return
 	}
-	if inputMap.At(newPos) == objectBox {
+	if objectAtNewPos == objectBox {
 		succeed, _ = attemptMove(inputMap, move, newPos)
 		if !succeed {
+			newPos = oldPos
+			return
+		}
+	}
+	if isHorizontal(move) && isLargeBox(objectAtNewPos) {
+		succeed, _ = attemptMove(inputMap, move, newPos)
+		if !succeed {
+			newPos = oldPos
+			return
+		}
+	}
+	if isVertical(move) && isLargeBox(objectAtNewPos) {
+		cloneMap := inputMap.Clone()
+		otherNewPos := posOfOtherHalf(newPos, objectAtNewPos)
+		succeedLeft, _ := attemptMove(cloneMap, move, newPos)
+		succeedRight, _ := attemptMove(cloneMap, move, otherNewPos)
+		if succeedLeft && succeedRight {
+			attemptMove(inputMap, move, newPos)
+			attemptMove(inputMap, move, otherNewPos)
+		} else {
 			newPos = oldPos
 			return
 		}
@@ -56,6 +84,29 @@ func attemptMove(inputMap mapping.Map, move Move, oldPos mapping.Coord) (succeed
 	singleMove(inputMap, oldPos, newPos)
 	succeed = true
 	return
+}
+
+func posOfOtherHalf(pos mapping.Coord, object int32) mapping.Coord {
+	switch object {
+	case objectBoxLeft:
+		return pos.East()
+	case objectBoxRight:
+		return pos.West()
+	default:
+		panic("unknown object " + string(object))
+	}
+}
+
+func isHorizontal(move Move) bool {
+	return move == moveLeft || move == moveRight
+}
+
+func isVertical(move Move) bool {
+	return !isHorizontal(move)
+}
+
+func isLargeBox(object int32) bool {
+	return object == objectBoxLeft || object == objectBoxRight
 }
 
 func singleMove(inputMap mapping.Map, robotPos mapping.Coord, newPos mapping.Coord) {
@@ -85,7 +136,7 @@ func parseMoves(moves string) []Move {
 func gpsTotal(m mapping.Map) int {
 	var total int
 	m.ForEachCoord(func(c mapping.Coord, value int32) {
-		if value == objectBox {
+		if value == objectBox || value == objectBoxLeft {
 			total += c.Row*100 + c.Col
 		}
 	})
