@@ -8,14 +8,16 @@ import (
 type Move int32
 
 const (
-	moveUp      = '^'
-	moveRight   = '>'
-	moveDown    = 'v'
-	moveLeft    = '<'
-	objectNone  = '.'
-	objectRobot = '@'
-	objectWall  = '#'
-	objectBox   = 'O'
+	moveUp         = '^'
+	moveRight      = '>'
+	moveDown       = 'v'
+	moveLeft       = '<'
+	objectNone     = '.'
+	objectRobot    = '@'
+	objectWall     = '#'
+	objectBox      = 'O'
+	objectBoxLeft  = '['
+	objectBoxRight = ']'
 )
 
 func predictRobot(inputMap mapping.Map, moves []Move) mapping.Map {
@@ -88,4 +90,31 @@ func gpsTotal(m mapping.Map) int {
 		}
 	})
 	return total
+}
+
+func enlarge(inputMap mapping.Map) mapping.Map {
+	var result mapping.Map
+	for _, row := range inputMap {
+		enlargedRow := ""
+		for _, object := range row {
+			switch object {
+			case objectNone:
+				enlargedRow += string(object)
+				enlargedRow += string(object)
+			case objectWall:
+				enlargedRow += string(object)
+				enlargedRow += string(object)
+			case objectRobot:
+				enlargedRow += string(objectRobot)
+				enlargedRow += string(objectNone)
+			case objectBox:
+				enlargedRow += string(objectBoxLeft)
+				enlargedRow += string(objectBoxRight)
+			default:
+				panic("unknown object: " + string(object))
+			}
+		}
+		result = append(result, enlargedRow)
+	}
+	return result
 }

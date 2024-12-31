@@ -196,7 +196,7 @@ func Test_part1(t *testing.T) {
 			name:             "real",
 			inputMap:         mapping.ParseMap(day1.ReadFile("day15-map.txt")),
 			inputMoves:       parseMoves(day1.ReadFile("day15-moves.txt")),
-			expectedGpsTotal: 1,
+			expectedGpsTotal: 1371036,
 		},
 	}
 	for _, test := range tests {
@@ -208,6 +208,39 @@ func Test_part1(t *testing.T) {
 			if test.expectedMap != nil {
 				assert.Equal(t, test.expectedMap.String(), solvedMap.String())
 			}
+		})
+	}
+}
+
+func Test_enlarge(t *testing.T) {
+	tests := []struct {
+		name        string
+		inputMap    mapping.Map
+		expectedMap mapping.Map
+	}{
+		{
+			name: "example",
+			inputMap: mapping.ParseMap(`
+#######
+#...#.#
+#.....#
+#..OO@#
+#..O..#
+#.....#
+#######`),
+			expectedMap: mapping.ParseMap(`
+##############
+##......##..##
+##..........##
+##....[][]@.##
+##....[]....##
+##..........##
+##############`),
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expectedMap.String(), enlarge(test.inputMap).String())
 		})
 	}
 }
