@@ -89,6 +89,36 @@ func Test_part1(t *testing.T) {
 				"#..@O.#",
 			},
 		},
+		{
+			name: "move right with blocked box",
+			inputMap: mapping.Map{
+				"#.@O#",
+			},
+			inputMoves: parseMoves(">"),
+			expectedMap: mapping.Map{
+				"#.@O#",
+			},
+		},
+		{
+			name: "move right with multiple blocked boxes",
+			inputMap: mapping.Map{
+				"#.@OOOO#",
+			},
+			inputMoves: parseMoves(">"),
+			expectedMap: mapping.Map{
+				"#.@OOOO#",
+			},
+		},
+		{
+			name: "move right pushing multiple boxes",
+			inputMap: mapping.Map{
+				"#.@OOO.#",
+			},
+			inputMoves: parseMoves(">"),
+			expectedMap: mapping.Map{
+				"#..@OOO#",
+			},
+		},
 		//{
 		//	name:        "sample",
 		//	inputMap:    mapping.ParseMap(smallSampleMap),

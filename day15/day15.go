@@ -23,23 +23,29 @@ func predictRobot(inputMap mapping.Map, moves []Move) mapping.Map {
 	return inputMap
 }
 
-func attemptMove(inputMap mapping.Map, move Move, agentPos mapping.Coord) {
+func attemptMove(inputMap mapping.Map, move Move, agentPos mapping.Coord) (succeed bool) {
 	switch move {
 	case moveRight:
 		newPos := agentPos.East()
 		if inputMap.At(newPos) == objectWall {
-			break
+			succeed = false
+			return
 		}
 		if inputMap.At(newPos) == objectBox {
-			attemptMove(inputMap, move, newPos)
+			succeed = attemptMove(inputMap, move, newPos)
+			if !succeed {
+				return
+			}
 		}
 		singleMove(inputMap, agentPos, newPos)
+		succeed = true
 	case moveLeft:
 		newPos := agentPos.West()
 		singleMove(inputMap, agentPos, newPos)
 	default:
 		panic("unknown move: " + string(move))
 	}
+	return
 }
 
 func singleMove(inputMap mapping.Map, robotPos mapping.Coord, newPos mapping.Coord) {
