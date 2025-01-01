@@ -21,10 +21,22 @@ func Test_part1(t *testing.T) {
 			},
 			expected: 4,
 		},
+		{
+			name: "elbow",
+			input: mapping.Map{
+				"#######",
+				"#S....#",
+				"#####.#",
+				"#####E#",
+				"#######",
+			},
+			expected: 1006,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expected, lowestScore(test.input))
+			maze := NewMaze(test.input)
+			assert.Equal(t, test.expected, maze.LowestScore())
 		})
 	}
 }
