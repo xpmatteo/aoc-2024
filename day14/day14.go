@@ -11,21 +11,21 @@ import (
 	"strings"
 )
 
-type point day13.Point
+type Point day13.Point
 
-func (p point) Plus(q point) point {
+func (p Point) Plus(q Point) Point {
 	pp := day13.Point(p)
 	qq := day13.Point(q)
-	return point(pp.Plus(qq))
+	return Point(pp.Plus(qq))
 }
 
 type Robot struct {
-	position, speed point
+	position, speed Point
 }
 
 type Lobby struct {
 	robots []*Robot
-	size   point
+	size   Point
 }
 
 func (l *Lobby) Simulate(seconds int) {
@@ -96,7 +96,7 @@ func split(input string) []string {
 	return strings.Split(input, "\n")
 }
 
-func parseLobby(size point, input string) Lobby {
+func ParseLobby(size Point, input string) Lobby {
 	lines := split(input)
 	var robots []*Robot
 	for _, line := range lines {
@@ -120,8 +120,8 @@ func parseRobot(input string) *Robot {
 		return day1.Atoi(s)
 	})
 	robot := &Robot{
-		position: point{numbers[0], numbers[1]},
-		speed:    point{numbers[2], numbers[3]},
+		position: Point{numbers[0], numbers[1]},
+		speed:    Point{numbers[2], numbers[3]},
 	}
 	return robot
 }

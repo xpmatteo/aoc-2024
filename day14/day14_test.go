@@ -30,10 +30,10 @@ func Test_parseLobby(t *testing.T) {
 			name:  "one robot",
 			input: "p=0,4 v=3,-3",
 			expected: Lobby{
-				size: point{11, 11},
+				size: Point{11, 11},
 				robots: []*Robot{{
-					position: point{0, 4},
-					speed:    point{3, -3},
+					position: Point{0, 4},
+					speed:    Point{3, -3},
 				}},
 			},
 		},
@@ -44,15 +44,15 @@ func Test_parseLobby(t *testing.T) {
 				"p=6,3 v=-1,-2",
 			),
 			expected: Lobby{
-				size: point{11, 11},
+				size: Point{11, 11},
 				robots: []*Robot{
 					{
-						position: point{0, 4},
-						speed:    point{3, -3},
+						position: Point{0, 4},
+						speed:    Point{3, -3},
 					},
 					{
-						position: point{6, 3},
-						speed:    point{-1, -2},
+						position: Point{6, 3},
+						speed:    Point{-1, -2},
 					},
 				},
 			},
@@ -60,7 +60,7 @@ func Test_parseLobby(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expected, parseLobby(point{11, 11}, test.input))
+			assert.Equal(t, test.expected, ParseLobby(Point{11, 11}, test.input))
 		})
 	}
 }
@@ -84,7 +84,7 @@ func Test_simulation(t *testing.T) {
 	}{
 		{
 			name:    "one robot",
-			input:   parseLobby(point{11, 4}, "p=0,0 v=1,2"),
+			input:   ParseLobby(Point{11, 4}, "p=0,0 v=1,2"),
 			seconds: 1,
 			expected: mapping.Map{
 				"...........",
@@ -95,7 +95,7 @@ func Test_simulation(t *testing.T) {
 		},
 		{
 			name:    "wrap around",
-			input:   parseLobby(point{11, 4}, "p=0,0 v=1,2"),
+			input:   ParseLobby(Point{11, 4}, "p=0,0 v=1,2"),
 			seconds: 2,
 			expected: mapping.Map{
 				"..1........",
@@ -106,7 +106,7 @@ func Test_simulation(t *testing.T) {
 		},
 		{
 			name: "2 robots",
-			input: parseLobby(point{11, 4},
+			input: ParseLobby(Point{11, 4},
 				"p=0,0 v=1,2\n"+
 					"p=0,0 v=-1,-1\n"),
 			seconds: 1,
@@ -119,7 +119,7 @@ func Test_simulation(t *testing.T) {
 		},
 		{
 			name: "2 robots in the same tile",
-			input: parseLobby(point{11, 4},
+			input: ParseLobby(Point{11, 4},
 				"p=0,0 v=1,2\n"+
 					"p=0,0 v=1,2\n"),
 			seconds: 1,
@@ -132,7 +132,7 @@ func Test_simulation(t *testing.T) {
 		},
 		{
 			name:    "sample 100",
-			input:   parseLobby(point{11, 7}, sample),
+			input:   ParseLobby(Point{11, 7}, sample),
 			seconds: 100,
 			expected: mapping.Map{
 				"......2..1.",
@@ -147,7 +147,7 @@ func Test_simulation(t *testing.T) {
 		},
 		{
 			name:                 "real",
-			input:                parseLobby(point{101, 103}, day1.ReadFile("day14.txt")),
+			input:                ParseLobby(Point{101, 103}, day1.ReadFile("day14.txt")),
 			seconds:              100,
 			expectedSafetyFactor: 221616000,
 		},
@@ -163,5 +163,19 @@ func Test_simulation(t *testing.T) {
 				assert.Equal(t, test.expected.String(), lobby.Map().String())
 			}
 		})
+	}
+}
+
+func Test_easterEgg(t *testing.T) {
+	lobby := ParseLobby(Point{101, 103}, day1.ReadFile("day14.txt"))
+	start := 36155
+	lobby.Simulate(start)
+	for seconds := start + 1; seconds < 100000; seconds++ {
+		lobby.Simulate(1)
+		if lobby.Matrix()[50][0] > 0 && lobby.Matrix()[49][1] > 0 && lobby.Matrix()[51][1] > 0 {
+			println("seconds:", seconds)
+			println(lobby.Map().String())
+			break
+		}
 	}
 }
