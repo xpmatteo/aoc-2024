@@ -27,6 +27,20 @@ func (c Coord) OrthoNeighbors() []Coord {
 	}
 }
 
+type CoordDir struct {
+	C Coord
+	D Direction
+}
+
+func (c Coord) OrthoNeighbors1() []CoordDir {
+	return []CoordDir{
+		{c.North(), DirectionNorth},
+		{c.East(), DirectionEast},
+		{c.South(), DirectionSouth},
+		{c.West(), DirectionWest},
+	}
+}
+
 func (c Coord) North() Coord {
 	return Coord{
 		Row: c.Row - 1,
