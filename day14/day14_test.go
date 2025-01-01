@@ -179,3 +179,37 @@ func Test_easterEgg(t *testing.T) {
 		}
 	}
 }
+
+func Test_proportion(t *testing.T) {
+	tests := []struct {
+		name               string
+		input              Lobby
+		expectedProportion float64
+		expectedMap        mapping.Map
+	}{
+		{
+			name: "simple",
+			input: ParseLobby(Point{11, 4},
+				"p=0,0 v=0,0\n"+
+					"p=0,2 v=0,0\n"+
+					"p=1,2 v=0,0\n"+
+					"p=2,2 v=0,0\n"),
+			expectedMap: mapping.Map{
+				"1..........",
+				"...........",
+				"111........",
+				"...........",
+			},
+			expectedProportion: 1 / 3.0,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			lobby := test.input
+			if test.expectedMap != nil {
+				assert.Equal(t, test.expectedMap.String(), lobby.Map().String())
+			}
+			assert.Equal(t, test.expectedProportion, lobby.UpperVsLowerProportion())
+		})
+	}
+}

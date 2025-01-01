@@ -88,6 +88,22 @@ func (l *Lobby) SafetyFactor() int {
 	return int(q0 * q1 * q2 * q3)
 }
 
+func (l *Lobby) UpperVsLowerProportion() float64 {
+	mat := l.Matrix()
+	midY := l.size.Y / 2
+	var upper, lower int32
+	for x := range l.size.X {
+		for y := range l.size.Y {
+			if y < midY {
+				upper += mat[x][y]
+			} else {
+				lower += mat[x][y]
+			}
+		}
+	}
+	return float64(upper) / float64(lower)
+}
+
 func join(s ...string) string {
 	return strings.Join(s, "\n")
 }
