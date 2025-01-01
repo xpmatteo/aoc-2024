@@ -28,8 +28,8 @@ func NewMaze(input mapping.Map) *Maze {
 	}
 	return &Maze{
 		theMap: input,
-		start:  findObject(input, objectStart),
-		end:    findObject(input, objectEnd),
+		start:  input.FindObject(objectStart),
+		end:    input.FindObject(objectEnd),
 		scores: scores,
 	}
 }
@@ -69,14 +69,4 @@ func (m *Maze) bestScore(neighbors []mapping.Coord) int {
 		}
 	}
 	return lowest
-}
-
-func findObject(input mapping.Map, lookingFor int32) mapping.Coord {
-	var result mapping.Coord
-	input.ForEachCoord(func(c mapping.Coord, value int32) {
-		if value == lookingFor {
-			result = c
-		}
-	})
-	return result
 }

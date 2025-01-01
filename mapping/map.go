@@ -74,3 +74,13 @@ func (m Map) At(coord Coord) int32 {
 	}
 	return 0
 }
+
+func (m Map) FindObject(lookingFor int32) Coord {
+	var result Coord
+	m.ForEachCoord(func(c Coord, value int32) {
+		if value == lookingFor {
+			result = c
+		}
+	})
+	return result
+}
