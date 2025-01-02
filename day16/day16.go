@@ -20,8 +20,8 @@ type Maze struct {
 }
 
 type Score struct {
-	dir   mapping.Direction
 	value int
+	dir   mapping.Direction
 }
 
 func NewMaze(input mapping.Map) *Maze {
@@ -49,15 +49,19 @@ func (m *Maze) getScore(c mapping.Coord) Score {
 }
 
 func (m *Maze) LowestScore() int {
-	m.setScore(m.start, 0, mapping.DirectionNone)
+	m.setScore(m.start, 0, mapping.DirectionEast)
 	more := true
 	for more {
 		more = false
 		m.theMap.ForEachCoord(func(c mapping.Coord, value int32) {
 			if value == objectNone || value == objectEnd {
-				updatedScore := m.updatedScore(c, c.OrthoNeighbors1())
-				if updatedScore.value < m.getScore(c).value {
-					m.setScore(c, updatedScore.value, "")
+				scoreHere := m.getScore(c)
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionNorth, m.getScore(c.North()))
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionEast, m.getScore(c.East()))
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionSouth, m.getScore(c.South()))
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionWest, m.getScore(c.West()))
+				if scoreHere != m.getScore(c) {
+					m.setScore(c, scoreHere.value, scoreHere.dir)
 					more = true
 				}
 			}
@@ -66,13 +70,24 @@ func (m *Maze) LowestScore() int {
 	return m.getScore(m.end).value
 }
 
-func (m *Maze) updatedScore(c mapping.Coord, neighbors []mapping.CoordDir) Score {
-	lowest := math.MaxInt
-	for _, neighbor := range neighbors {
-		sc := m.getScore(neighbor.C)
-		if sc.value < lowest {
-			lowest = sc.value
+func (here Score) ImproveScore(neighborIs mapping.Direction, neighborScore Score) Score {
+	if neighborScore.dir == mapping.DirectionNone {
+		return here
+	}
+	if neighborScore.dir == neighborIs.Opposite() {
+		if neighborScore.value+1 < here.value {
+			return Score{
+				value: neighborScore.value + 1,
+				dir:   neighborScore.dir,
+			}
+		}
+		return here
+	}
+	if neighborScore.value+1000+1 < here.value {
+		return Score{
+			value: neighborScore.value + 1000 + 1,
+			dir:   neighborIs.Opposite(),
 		}
 	}
-	return Score{value: lowest + 1}
+	return here
 }
