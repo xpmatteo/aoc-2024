@@ -17,6 +17,7 @@ type Maze struct {
 	theMap     mapping.Map
 	start, end mapping.Coord
 	scores     [][]Score
+	onBestPath [][]bool
 }
 
 type Score struct {
@@ -26,16 +27,18 @@ type Score struct {
 
 func NewMaze(input mapping.Map) *Maze {
 	scores := matrix.New[Score](input.Rows(), input.Cols())
+	bestPaths := matrix.New[bool](input.Rows(), input.Cols())
 	for r := 0; r < input.Rows(); r++ {
 		for c := 0; c < input.Cols(); c++ {
 			scores[r][c].value = math.MaxInt
 		}
 	}
 	return &Maze{
-		theMap: input,
-		start:  input.FindObject(objectStart),
-		end:    input.FindObject(objectEnd),
-		scores: scores,
+		theMap:     input,
+		start:      input.FindObject(objectStart),
+		end:        input.FindObject(objectEnd),
+		scores:     scores,
+		onBestPath: bestPaths,
 	}
 }
 
@@ -90,4 +93,57 @@ func (here Score) ImproveScore(neighborIs mapping.Direction, neighborScore Score
 		}
 	}
 	return here
+}
+
+func (m *Maze) CountBestTilesToSit() int {
+	m.setOnBestPath(m.end)
+	more := true
+	for more {
+		more = m.propagateBestTileToSit()
+	}
+	total := 0
+	m.theMap.ForEachCoord(func(c mapping.Coord, value int32) {
+		if m.isOnBestPath(c) {
+			total++
+		}
+	})
+	return total
+}
+
+func (m *Maze) isOnBestPath(c mapping.Coord) bool {
+	return m.onBestPath[c.Row][c.Col]
+}
+
+func (m *Maze) setOnBestPath(tile mapping.Coord) {
+	m.onBestPath[tile.Row][tile.Col] = true
+}
+
+func (m *Maze) propagateBestTileToSit() bool {
+	more := false
+	m.theMap.ForEachCoord(func(c mapping.Coord, value int32) {
+		if !m.isOnBestPath(c) {
+			return
+		}
+		lowestScore := math.MaxInt
+		for _, neighbor := range c.OrthoNeighbors() {
+			lowestScore = min(lowestScore, m.getScore(neighbor).value)
+		}
+		for _, neighbor := range c.OrthoNeighbors() {
+			if m.getScore(neighbor).value == lowestScore && !m.isOnBestPath(neighbor) {
+				m.setOnBestPath(neighbor)
+				more = true
+			}
+		}
+	})
+	return more
+}
+
+func (m *Maze) ShowBestPath() string {
+	clone := m.theMap.Clone()
+	clone.ForEachCoord(func(c mapping.Coord, object int32) {
+		if m.isOnBestPath(c) {
+			clone.SetCoord(c, 'O')
+		}
+	})
+	return clone.String()
 }
