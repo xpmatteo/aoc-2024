@@ -5,6 +5,7 @@ import (
 	"github.com/xpmatteo/aoc-2024/matrix"
 	"math"
 	"slices"
+	"testing"
 )
 
 const (
@@ -60,9 +61,25 @@ func (m *Maze) LowestScore() int {
 	return scores.getScore(m.end).value
 }
 
-//func (m *Maze) memoizedComputeScoresFrom(start mapping.Coord, startScore int, startDir mapping.Direction) Scores {
-//
-//}
+type coordAndScore struct {
+	c mapping.Coord
+	s Score
+}
+
+var memoized = make(map[coordAndScore]Score)
+
+func (m *Maze) endScore(c mapping.Coord, s Score) Score {
+	//key := coordAndScore{c, s}
+	//score, ok := memoized[key]
+	//if ok {
+	//	return score
+	//}
+	//score = m.computeScoresFrom(c, s).getScore(m.end)
+	//memoized[key] = score
+	//return score
+
+	return m.computeScoresFrom(c, s).getScore(m.end)
+}
 
 func (m *Maze) computeScoresFrom(start mapping.Coord, startScore Score) Scores {
 	scores := NewScores(m.theMap.Rows(), m.theMap.Cols())
@@ -117,11 +134,13 @@ func (m *Maze) setOnBestPath(tile mapping.Coord) {
 	m.onBestPath[tile.Row][tile.Col] = true
 }
 
-func (m *Maze) propagateBestTileToSit(sc Scores) []mapping.Coord {
+func (m *Maze) propagateBestTileToSit(sc Scores, t *testing.T) []mapping.Coord {
 	toExplore := []mapping.Coord{m.end}
 	bestPlaces := []mapping.Coord{}
 	endScore := sc.getScore(m.end)
+	it := 0
 	for len(toExplore) > 0 {
+		t.Logf("It %3d, to explore %2d, best path %3d", it, len(toExplore), len(bestPlaces))
 		c := toExplore[0]
 		toExplore = toExplore[1:]
 		bestPlaces = append(bestPlaces, c)
@@ -130,11 +149,12 @@ func (m *Maze) propagateBestTileToSit(sc Scores) []mapping.Coord {
 				continue
 			}
 			neighborScore := sc.getScore(neighbor)
-			endScoreFromNeighbor := m.computeScoresFrom(neighbor, neighborScore).getScore(m.end)
+			endScoreFromNeighbor := m.endScore(neighbor, neighborScore)
 			if endScoreFromNeighbor == endScore {
 				toExplore = append(toExplore, neighbor)
 			}
 		}
+		it++
 	}
 	return bestPlaces
 }

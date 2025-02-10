@@ -299,10 +299,9 @@ func Test_part2(t *testing.T) {
 #################`,
 		},
 		{
-			skip:          true,
 			name:          "real part 2",
 			input:         mapping.ParseMap(day1.ReadFile("day16.txt")),
-			expectedCount: 1,
+			expectedCount: 498,
 		},
 	}
 	for _, test := range tests {
@@ -312,7 +311,7 @@ func Test_part2(t *testing.T) {
 			}
 			maze := NewMaze(test.input)
 			scores := maze.computeScoresFrom(maze.start, Score{0, mapping.DirectionEast})
-			bestPlaces := maze.propagateBestTileToSit(scores)
+			bestPlaces := maze.propagateBestTileToSit(scores, t)
 			assert.Equal(t, test.expectedCount, len(bestPlaces))
 			if len(test.expectedMap) > 0 {
 				assert.Equal(t, strings.TrimLeft(test.expectedMap, "\n"), maze.ShowBestPath(bestPlaces))
