@@ -24,10 +24,18 @@ func (m *Machine) Execute() string {
 			m.B = m.B ^ operand
 		case 2:
 			m.B = m.combo(operand) % 8
+		case 3:
+			if m.A != 0 {
+				pc = operand - 2
+			}
 		case 4:
 			m.B = m.B ^ m.C
 		case 5:
 			output = append(output, strconv.Itoa(m.combo(operand)%8))
+		case 6:
+			m.B = m.A / (1 << m.combo(operand))
+		case 7:
+			m.C = m.A / (1 << m.combo(operand))
 		default:
 			log.Fatal("Unknown opcode: ", opcode)
 		}
