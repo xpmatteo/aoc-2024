@@ -311,8 +311,8 @@ func Test_part2(t *testing.T) {
 				t.Skip()
 			}
 			maze := NewMaze(test.input)
-			maze.LowestScore()
-			assert.Equal(t, test.expectedCount, maze.CountBestTilesToSit())
+			scores := maze.computeScoresFrom(maze.start, 0, mapping.DirectionEast)
+			assert.Equal(t, test.expectedCount, maze.CountBestTilesToSit(scores))
 			if len(test.expectedMap) > 0 {
 				assert.Equal(t, strings.TrimLeft(test.expectedMap, "\n"), maze.ShowBestPath())
 			}
