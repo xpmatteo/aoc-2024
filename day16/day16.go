@@ -4,6 +4,7 @@ import (
 	"github.com/xpmatteo/aoc-2024/mapping"
 	"github.com/xpmatteo/aoc-2024/matrix"
 	"math"
+	"slices"
 )
 
 const (
@@ -105,21 +106,6 @@ func (here Score) ImproveScore(neighborIs mapping.Direction, neighborScore Score
 	return here
 }
 
-func (m *Maze) CountBestTilesToSit(sc Scores) int {
-	m.setOnBestPath(m.end)
-	more := true
-	for more {
-		more = m.propagateBestTileToSit(sc)
-	}
-	total := 0
-	m.theMap.ForEachCoord(func(c mapping.Coord, value int32) {
-		if m.isOnBestPath(c) {
-			total++
-		}
-	})
-	return total
-}
-
 func (m *Maze) isOnBestPath(c mapping.Coord) bool {
 	return m.onBestPath[c.Row][c.Col]
 }
@@ -128,31 +114,33 @@ func (m *Maze) setOnBestPath(tile mapping.Coord) {
 	m.onBestPath[tile.Row][tile.Col] = true
 }
 
-func (m *Maze) propagateBestTileToSit(sc Scores) bool {
-	more := false
-	m.theMap.ForEachCoord(func(c mapping.Coord, value int32) {
-		if !m.isOnBestPath(c) {
-			return
-		}
-		scoreHere := sc.getScore(c).value
+func (m *Maze) propagateBestTileToSit(sc Scores) []mapping.Coord {
+	toExplore := []mapping.Coord{m.end}
+	bestPlaces := []mapping.Coord{}
+	endScore := sc.getScore(m.end)
+	for len(toExplore) > 0 {
+		c := toExplore[0]
+		toExplore = toExplore[1:]
+		bestPlaces = append(bestPlaces, c)
 		for _, neighbor := range c.OrthoNeighbors() {
+			if m.theMap.At(neighbor) == objectWall || slices.Contains(toExplore, neighbor) || slices.Contains(bestPlaces, neighbor) {
+				continue
+			}
 			neighborScore := sc.getScore(neighbor).value
-			//if (neighborScore == scoreHere.value-1 || neighborScore == scoreHere.value-1001) && !m.isOnBestPath(neighbor) {
-			if (neighborScore < scoreHere || neighborScore == scoreHere+999) && !m.isOnBestPath(neighbor) {
-				m.setOnBestPath(neighbor)
-				more = true
+			neighborDir := sc.getScore(neighbor).dir
+			endScoreFromNeighbor := m.computeScoresFrom(neighbor, neighborScore, neighborDir).getScore(m.end)
+			if endScoreFromNeighbor == endScore {
+				toExplore = append(toExplore, neighbor)
 			}
 		}
-	})
-	return more
+	}
+	return bestPlaces
 }
 
-func (m *Maze) ShowBestPath() string {
+func (m *Maze) ShowBestPath(bestPlaces []mapping.Coord) string {
 	clone := m.theMap.Clone()
-	clone.ForEachCoord(func(c mapping.Coord, object int32) {
-		if m.isOnBestPath(c) {
-			clone.SetCoord(c, 'O')
-		}
-	})
+	for _, c := range bestPlaces {
+		clone.SetCoord(c, 'O')
+	}
 	return clone.String()
 }
