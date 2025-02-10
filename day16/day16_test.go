@@ -311,7 +311,7 @@ func Test_part2(t *testing.T) {
 				t.Skip()
 			}
 			maze := NewMaze(test.input)
-			scores := maze.computeScoresFrom(maze.start, 0, mapping.DirectionEast)
+			scores := maze.computeScoresFrom(maze.start, Score{0, mapping.DirectionEast})
 			bestPlaces := maze.propagateBestTileToSit(scores)
 			assert.Equal(t, test.expectedCount, len(bestPlaces))
 			if len(test.expectedMap) > 0 {

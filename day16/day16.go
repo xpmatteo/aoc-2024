@@ -47,9 +47,8 @@ func NewScores(rows, cols int) Scores {
 	return sc
 }
 
-func (sc Scores) setScore(c mapping.Coord, score int, dir mapping.Direction) {
-	sc[c.Row][c.Col].value = score
-	sc[c.Row][c.Col].dir = dir
+func (sc Scores) setScore(c mapping.Coord, score Score) {
+	sc[c.Row][c.Col] = score
 }
 
 func (sc Scores) getScore(c mapping.Coord) Score {
@@ -57,13 +56,17 @@ func (sc Scores) getScore(c mapping.Coord) Score {
 }
 
 func (m *Maze) LowestScore() int {
-	scores := m.computeScoresFrom(m.start, 0, mapping.DirectionEast)
+	scores := m.computeScoresFrom(m.start, Score{0, mapping.DirectionEast})
 	return scores.getScore(m.end).value
 }
 
-func (m *Maze) computeScoresFrom(start mapping.Coord, startScore int, startDir mapping.Direction) Scores {
+//func (m *Maze) memoizedComputeScoresFrom(start mapping.Coord, startScore int, startDir mapping.Direction) Scores {
+//
+//}
+
+func (m *Maze) computeScoresFrom(start mapping.Coord, startScore Score) Scores {
 	scores := NewScores(m.theMap.Rows(), m.theMap.Cols())
-	scores.setScore(start, startScore, startDir)
+	scores.setScore(start, startScore)
 	more := true
 	for more {
 		more = false
@@ -75,7 +78,7 @@ func (m *Maze) computeScoresFrom(start mapping.Coord, startScore int, startDir m
 				scoreHere = scoreHere.ImproveScore(mapping.DirectionSouth, scores.getScore(c.South()))
 				scoreHere = scoreHere.ImproveScore(mapping.DirectionWest, scores.getScore(c.West()))
 				if scoreHere != scores.getScore(c) {
-					scores.setScore(c, scoreHere.value, scoreHere.dir)
+					scores.setScore(c, scoreHere)
 					more = true
 				}
 			}
@@ -126,9 +129,8 @@ func (m *Maze) propagateBestTileToSit(sc Scores) []mapping.Coord {
 			if m.theMap.At(neighbor) == objectWall || slices.Contains(toExplore, neighbor) || slices.Contains(bestPlaces, neighbor) {
 				continue
 			}
-			neighborScore := sc.getScore(neighbor).value
-			neighborDir := sc.getScore(neighbor).dir
-			endScoreFromNeighbor := m.computeScoresFrom(neighbor, neighborScore, neighborDir).getScore(m.end)
+			neighborScore := sc.getScore(neighbor)
+			endScoreFromNeighbor := m.computeScoresFrom(neighbor, neighborScore).getScore(m.end)
 			if endScoreFromNeighbor == endScore {
 				toExplore = append(toExplore, neighbor)
 			}
