@@ -13,10 +13,12 @@ const (
 	objectWall  = '#'
 )
 
+type Scores [][]Score
+
 type Maze struct {
 	theMap     mapping.Map
 	start, end mapping.Coord
-	scores     [][]Score
+	scores     Scores
 	onBestPath [][]bool
 }
 
@@ -42,35 +44,45 @@ func NewMaze(input mapping.Map) *Maze {
 	}
 }
 
-func (m *Maze) setScore(c mapping.Coord, score int, dir mapping.Direction) {
-	m.scores[c.Row][c.Col].value = score
-	m.scores[c.Row][c.Col].dir = dir
+func NewScores(rows, cols int) Scores {
+	sc := matrix.New[Score](rows, cols)
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
+			sc[r][c].value = math.MaxInt
+		}
+	}
+	return sc
 }
 
-func (m *Maze) getScore(c mapping.Coord) Score {
-	return m.scores[c.Row][c.Col]
+func (sc Scores) setScore(c mapping.Coord, score int, dir mapping.Direction) {
+	sc[c.Row][c.Col].value = score
+	sc[c.Row][c.Col].dir = dir
+}
+
+func (sc Scores) getScore(c mapping.Coord) Score {
+	return sc[c.Row][c.Col]
 }
 
 func (m *Maze) LowestScore() int {
-	m.setScore(m.start, 0, mapping.DirectionEast)
+	m.scores.setScore(m.start, 0, mapping.DirectionEast)
 	more := true
 	for more {
 		more = false
 		m.theMap.ForEachCoord(func(c mapping.Coord, value int32) {
 			if value == objectNone || value == objectEnd {
-				scoreHere := m.getScore(c)
-				scoreHere = scoreHere.ImproveScore(mapping.DirectionNorth, m.getScore(c.North()))
-				scoreHere = scoreHere.ImproveScore(mapping.DirectionEast, m.getScore(c.East()))
-				scoreHere = scoreHere.ImproveScore(mapping.DirectionSouth, m.getScore(c.South()))
-				scoreHere = scoreHere.ImproveScore(mapping.DirectionWest, m.getScore(c.West()))
-				if scoreHere != m.getScore(c) {
-					m.setScore(c, scoreHere.value, scoreHere.dir)
+				scoreHere := m.scores[c.Row][c.Col]
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionNorth, m.scores.getScore(c.North()))
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionEast, m.scores.getScore(c.East()))
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionSouth, m.scores.getScore(c.South()))
+				scoreHere = scoreHere.ImproveScore(mapping.DirectionWest, m.scores.getScore(c.West()))
+				if scoreHere != m.scores.getScore(c) {
+					m.scores.setScore(c, scoreHere.value, scoreHere.dir)
 					more = true
 				}
 			}
 		})
 	}
-	return m.getScore(m.end).value
+	return m.scores.getScore(m.end).value
 }
 
 func (here Score) ImproveScore(neighborIs mapping.Direction, neighborScore Score) Score {
@@ -124,9 +136,9 @@ func (m *Maze) propagateBestTileToSit() bool {
 		if !m.isOnBestPath(c) {
 			return
 		}
-		scoreHere := m.getScore(c).value
+		scoreHere := m.scores.getScore(c).value
 		for _, neighbor := range c.OrthoNeighbors() {
-			neighborScore := m.getScore(neighbor).value
+			neighborScore := m.scores.getScore(neighbor).value
 			//if (neighborScore == scoreHere.value-1 || neighborScore == scoreHere.value-1001) && !m.isOnBestPath(neighbor) {
 			if (neighborScore < scoreHere || neighborScore == scoreHere+999) && !m.isOnBestPath(neighbor) {
 				m.setOnBestPath(neighbor)
