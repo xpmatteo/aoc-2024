@@ -124,12 +124,11 @@ func (m *Maze) propagateBestTileToSit() bool {
 		if !m.isOnBestPath(c) {
 			return
 		}
-		lowestScore := math.MaxInt
+		scoreHere := m.getScore(c).value
 		for _, neighbor := range c.OrthoNeighbors() {
-			lowestScore = min(lowestScore, m.getScore(neighbor).value)
-		}
-		for _, neighbor := range c.OrthoNeighbors() {
-			if m.getScore(neighbor).value == lowestScore && !m.isOnBestPath(neighbor) {
+			neighborScore := m.getScore(neighbor).value
+			//if (neighborScore == scoreHere.value-1 || neighborScore == scoreHere.value-1001) && !m.isOnBestPath(neighbor) {
+			if (neighborScore < scoreHere || neighborScore == scoreHere+999) && !m.isOnBestPath(neighbor) {
 				m.setOnBestPath(neighbor)
 				more = true
 			}
