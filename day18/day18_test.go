@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/xpmatteo/aoc-2024/matrix"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -53,6 +54,12 @@ func Test_part1(t *testing.T) {
 			input:    "5,4\n4,2\n4,5\n3,0\n2,1\n6,3\n2,4\n1,5\n0,6\n3,3\n2,6\n5,1",
 			expected: 22,
 		},
+		{
+			name:     "part1",
+			size:     71,
+			input:    readFile("input.txt"),
+			expected: 22,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -61,23 +68,35 @@ func Test_part1(t *testing.T) {
 	}
 }
 
+func readFile(fileName string) string {
+	bytes, err := os.ReadFile(fileName)
+	if err != nil {
+		panic(err)
+	}
+	return string(bytes)
+}
+
 func TestParseInput(t *testing.T) {
 	input := "" +
 		"1,0\n" +
-		"0,2\n"
+		"0,2\n" +
+		"2,2"
 	expected := matrix.New[bool](3, 3)
 	expected[1][0] = true
 	expected[0][2] = true
 
-	mat, err := parseInput(3, input)
+	mat, err := parseInput(3, 2, input)
 	require.NoError(t, err)
 	assert.Equal(t, expected, mat)
 }
 
-func parseInput(size int, input string) ([][]bool, error) {
+func parseInput(size int, maxBytes int, input string) ([][]bool, error) {
 	lines := strings.Split(input, "\n")
 	result := matrix.New[bool](size, size)
-	for _, line := range lines {
+	for i, line := range lines {
+		if i == maxBytes {
+			return result, nil
+		}
 		if len(line) == 0 {
 			continue
 		}
@@ -113,7 +132,7 @@ var directions = []point{
 
 func solvePart1(size int, input string) int {
 	seen := matrix.New[bool](size, size)
-	blocked, err := parseInput(size, input)
+	blocked, err := parseInput(size, 1024, input)
 	if err != nil {
 		panic(err)
 	}
