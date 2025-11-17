@@ -1,8 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/xpmatteo/aoc-2024/matrix"
+	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -17,13 +21,13 @@ func Test_part1(t *testing.T) {
 			name:     "2x2 empty",
 			size:     2,
 			input:    "",
-			expected: 3,
+			expected: 2,
 		},
 		{
 			name:     "3x3 empty",
 			size:     3,
 			input:    "",
-			expected: 5,
+			expected: 4,
 		},
 		{
 			name: "5x5 with obstacle",
@@ -41,7 +45,13 @@ func Test_part1(t *testing.T) {
 				"3,3\n" +
 				"3,4\n" +
 				"",
-			expected: 11,
+			expected: 10,
+		},
+		{
+			name:     "small example from problem statement",
+			size:     7,
+			input:    "5,4\n4,2\n4,5\n3,0\n2,1\n6,3\n2,4\n1,5\n0,6\n3,3\n2,6\n5,1",
+			expected: 22,
 		},
 	}
 	for _, test := range tests {
@@ -49,6 +59,43 @@ func Test_part1(t *testing.T) {
 			assert.Equal(t, test.expected, solvePart1(test.size, test.input))
 		})
 	}
+}
+
+func TestParseInput(t *testing.T) {
+	input := "" +
+		"1,0\n" +
+		"0,2\n"
+	expected := matrix.New[bool](3, 3)
+	expected[1][0] = true
+	expected[0][2] = true
+
+	mat, err := parseInput(3, input)
+	require.NoError(t, err)
+	assert.Equal(t, expected, mat)
+}
+
+func parseInput(size int, input string) ([][]bool, error) {
+	lines := strings.Split(input, "\n")
+	result := matrix.New[bool](size, size)
+	for _, line := range lines {
+		if len(line) == 0 {
+			continue
+		}
+		numbers := strings.Split(line, ",")
+		if len(numbers) != 2 {
+			return nil, fmt.Errorf("bad line: <%s>", line)
+		}
+		x, err := strconv.Atoi(numbers[0])
+		if err != nil {
+			return nil, fmt.Errorf("bad line 1: <%s>", line)
+		}
+		y, err := strconv.Atoi(numbers[1])
+		if err != nil {
+			return nil, fmt.Errorf("bad line 1: <%s>", line)
+		}
+		result[x][y] = true
+	}
+	return result, nil
 }
 
 type point struct{ x, y int }
@@ -66,11 +113,17 @@ var directions = []point{
 
 func solvePart1(size int, input string) int {
 	seen := matrix.New[bool](size, size)
-	blocked := matrix.New[bool](size, size)
+	blocked, err := parseInput(size, input)
+	if err != nil {
+		panic(err)
+	}
 	frontier := []point{{0, 0}}
-	length := 1
+	length := 0
 	seen[0][0] = true
 	for {
+		if len(frontier) == 0 {
+			panic(fmt.Errorf("empty frontier at length %d", length))
+		}
 		newFrontier := []point{}
 		length++
 		for _, p := range frontier {
