@@ -67,6 +67,37 @@ func Test_part1(t *testing.T) {
 	}
 }
 
+func TestPart2(t *testing.T) {
+	tests := []struct {
+		name     string
+		size     int
+		input    []point
+		expected string
+	}{
+		{
+			name:     "smaller example from part1",
+			size:     7,
+			input:    parseInput1("5,4\n4,2\n4,5\n3,0\n2,1\n6,3\n2,4\n1,5\n0,6\n3,3\n2,6\n5,1\n1,2\n5,5\n2,5\n6,5\n1,4\n0,4\n6,4\n1,1\n6,1\n1,0\n0,5\n1,6\n2,0"),
+			expected: "6,1",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expected, solvePart2(test.size, test.input))
+		})
+	}
+}
+
+func solvePart2(size int, blockedPoints []point) string {
+	for i := 1; i < len(blockedPoints); i++ {
+		lengthOfPath := solvePart1(size, blockedPoints[:i])
+		if lengthOfPath == -1 {
+			return blockedPoints[i-1].String()
+		}
+	}
+	return "sss"
+}
+
 func readFile(fileName string) string {
 	bytes, err := os.ReadFile(fileName)
 	if err != nil {
@@ -105,6 +136,10 @@ func (p point) plus(q point) point {
 	return point{p.x + q.x, p.y + q.y}
 }
 
+func (p point) String() string {
+	return fmt.Sprintf("%d,%d", p.x, p.y)
+}
+
 var directions = []point{
 	{1, 0}, // right
 	{0, 1}, // bottom
@@ -120,7 +155,7 @@ func solvePart1(size int, blockedPoints []point) int {
 	seen[0][0] = true
 	for {
 		if len(frontier) == 0 {
-			panic(fmt.Errorf("empty frontier at length %d", length))
+			return -1
 		}
 		newFrontier := []point{}
 		length++
