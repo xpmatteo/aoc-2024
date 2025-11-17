@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/xpmatteo/aoc-2024/matrix"
 	"os"
 	"strconv"
@@ -58,7 +57,7 @@ func Test_part1(t *testing.T) {
 			name:     "part1",
 			size:     71,
 			input:    readFile("input.txt"),
-			expected: 22,
+			expected: 322,
 		},
 	}
 	for _, test := range tests {
@@ -76,48 +75,31 @@ func readFile(fileName string) string {
 	return string(bytes)
 }
 
-func TestParseInput(t *testing.T) {
-	input := "" +
-		"1,0\n" +
-		"0,2\n" +
-		"2,2"
-	expected := matrix.New[bool](3, 3)
-	expected[1][0] = true
-	expected[0][2] = true
+type point struct{ x, y int }
 
-	mat, err := parseInput(3, 2, input)
-	require.NoError(t, err)
-	assert.Equal(t, expected, mat)
-}
-
-func parseInput(size int, maxBytes int, input string) ([][]bool, error) {
+func parseInput1(input string) []point {
+	result := []point{}
 	lines := strings.Split(input, "\n")
-	result := matrix.New[bool](size, size)
-	for i, line := range lines {
-		if i == maxBytes {
-			return result, nil
-		}
+	for _, line := range lines {
 		if len(line) == 0 {
 			continue
 		}
 		numbers := strings.Split(line, ",")
 		if len(numbers) != 2 {
-			return nil, fmt.Errorf("bad line: <%s>", line)
+			panic(fmt.Errorf("bad line: <%s>", line))
 		}
 		x, err := strconv.Atoi(numbers[0])
 		if err != nil {
-			return nil, fmt.Errorf("bad line 1: <%s>", line)
+			panic(fmt.Errorf("bad line 1: <%s>", line))
 		}
 		y, err := strconv.Atoi(numbers[1])
 		if err != nil {
-			return nil, fmt.Errorf("bad line 1: <%s>", line)
+			panic(fmt.Errorf("bad line 1: <%s>", line))
 		}
-		result[x][y] = true
+		result = append(result, point{x, y})
 	}
-	return result, nil
+	return result
 }
-
-type point struct{ x, y int }
 
 func (p point) plus(q point) point {
 	return point{p.x + q.x, p.y + q.y}
@@ -132,10 +114,8 @@ var directions = []point{
 
 func solvePart1(size int, input string) int {
 	seen := matrix.New[bool](size, size)
-	blocked, err := parseInput(size, 1024, input)
-	if err != nil {
-		panic(err)
-	}
+	blockedPoints := parseInput1(input)
+	blocked := toMatrix(size, blockedPoints[:min(1024, len(blockedPoints))])
 	frontier := []point{{0, 0}}
 	length := 0
 	seen[0][0] = true
@@ -163,6 +143,14 @@ func solvePart1(size int, input string) int {
 		}
 		frontier = newFrontier
 	}
+}
+
+func toMatrix(size int, points []point) [][]bool {
+	result := matrix.New[bool](size, size)
+	for _, p := range points {
+		result[p.x][p.y] = true
+	}
+	return result
 }
 
 func isExit(size int, p point) bool {
