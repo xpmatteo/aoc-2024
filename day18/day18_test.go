@@ -114,6 +114,33 @@ func readFile(fileName string) string {
 
 type point struct{ x, y int }
 
+func (p point) plus(q point) point {
+	return point{p.x + q.x, p.y + q.y}
+}
+
+var directions = []point{
+	{1, 0}, // right
+	{0, 1}, // bottom
+	{-1, 0},
+	{0, -1},
+}
+
+func set(m [][]bool, p point) {
+	m[p.x][p.y] = true
+}
+
+func get(seen [][]bool, p point) bool {
+	return seen[p.x][p.y]
+}
+
+func isExit(size int, p point) bool {
+	return p.x == size-1 && p.y == size-1
+}
+
+func outOfRange(size int, p point) bool {
+	return p.x < 0 || p.y < 0 || p.x >= size || p.y >= size
+}
+
 func parseInput1(input string) []point {
 	result := []point{}
 	lines := strings.Split(input, "\n")
@@ -138,19 +165,8 @@ func parseInput1(input string) []point {
 	return result
 }
 
-func (p point) plus(q point) point {
-	return point{p.x + q.x, p.y + q.y}
-}
-
 func (p point) String() string {
 	return fmt.Sprintf("%d,%d", p.x, p.y)
-}
-
-var directions = []point{
-	{1, 0}, // right
-	{0, 1}, // bottom
-	{-1, 0},
-	{0, -1},
 }
 
 func solvePart1(size int, blockedPoints []point) int {
@@ -191,20 +207,4 @@ func toMatrix(size int, points []point) [][]bool {
 		result[p.x][p.y] = true
 	}
 	return result
-}
-
-func isExit(size int, p point) bool {
-	return p.x == size-1 && p.y == size-1
-}
-
-func set(m [][]bool, p point) {
-	m[p.x][p.y] = true
-}
-
-func get(seen [][]bool, p point) bool {
-	return seen[p.x][p.y]
-}
-
-func outOfRange(size int, p point) bool {
-	return p.x < 0 || p.y < 0 || p.x >= size || p.y >= size
 }
