@@ -14,19 +14,19 @@ func Test_part1(t *testing.T) {
 	tests := []struct {
 		name     string
 		size     int
-		input    string
+		input    []point
 		expected int
 	}{
 		{
 			name:     "2x2 empty",
 			size:     2,
-			input:    "",
+			input:    nil,
 			expected: 2,
 		},
 		{
 			name:     "3x3 empty",
 			size:     3,
-			input:    "",
+			input:    nil,
 			expected: 4,
 		},
 		{
@@ -38,25 +38,25 @@ func Test_part1(t *testing.T) {
 			// ...#.
 			// ...#.
 
-			input: "" +
-				"1,0\n" +
-				"3,1\n" +
-				"3,2\n" +
-				"3,3\n" +
-				"3,4\n" +
-				"",
+			input: []point{
+				{1, 0},
+				{3, 1},
+				{3, 2},
+				{3, 3},
+				{3, 4},
+			},
 			expected: 10,
 		},
 		{
 			name:     "small example from problem statement",
 			size:     7,
-			input:    "5,4\n4,2\n4,5\n3,0\n2,1\n6,3\n2,4\n1,5\n0,6\n3,3\n2,6\n5,1",
+			input:    parseInput1("5,4\n4,2\n4,5\n3,0\n2,1\n6,3\n2,4\n1,5\n0,6\n3,3\n2,6\n5,1"),
 			expected: 22,
 		},
 		{
 			name:     "part1",
 			size:     71,
-			input:    readFile("input.txt"),
+			input:    parseInput1(readFile("input.txt"))[:1024],
 			expected: 322,
 		},
 	}
@@ -112,12 +112,11 @@ var directions = []point{
 	{0, -1},
 }
 
-func solvePart1(size int, input string) int {
-	seen := matrix.New[bool](size, size)
-	blockedPoints := parseInput1(input)
-	blocked := toMatrix(size, blockedPoints[:min(1024, len(blockedPoints))])
+func solvePart1(size int, blockedPoints []point) int {
+	blocked := toMatrix(size, blockedPoints)
 	frontier := []point{{0, 0}}
 	length := 0
+	seen := matrix.New[bool](size, size)
 	seen[0][0] = true
 	for {
 		if len(frontier) == 0 {
