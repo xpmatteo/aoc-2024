@@ -17,8 +17,8 @@ func isPossible(towels []string, p string) bool {
 		return true
 	}
 	for _, t := range towels {
-		if strings.HasPrefix(p, t) {
-			return isPossible(towels, p[len(t):])
+		if strings.HasPrefix(p, t) && isPossible(towels, p[len(t):]) {
+			return true
 		}
 	}
 	return false

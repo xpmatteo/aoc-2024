@@ -65,6 +65,21 @@ func Test_part1(t *testing.T) {
 			patterns: []string{"wrbb", "bbwr", "bbbb", "www"},
 			expected: 3,
 		},
+		{
+			name:   "small example part 1",
+			towels: []string{"r", "wr", "b", "g", "bwu", "rb", "gb", "br"},
+			patterns: []string{
+				"brwrr",
+				"bggr",
+				"gbbr",
+				"rrbgbr",
+				"ubwu",
+				"bwurrg",
+				"brgr",
+				"bbrgwb",
+			},
+			expected: 6,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
