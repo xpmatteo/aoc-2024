@@ -2,20 +2,26 @@ package day19
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/xpmatteo/aoc-2024/day1"
+	"regexp"
 	"testing"
 )
 
-//
-// invariant
-// Pattern is a list of attempts
-// an attempt is a list of strings to match
-//
-// r, wr, b, g, bwu, rb, gb, br
-//
-// brwrr -> rwrr -> wrr -> r -> OK
-//          wrr -> r -> OK
-//
+func TestRegex(t *testing.T) {
+	re, err := regexp.Compile("^(wr|bb)+$")
+	require.NoError(t, err)
+
+	assert.True(t, re.MatchString("wr"))
+	assert.True(t, re.MatchString("bb"))
+	assert.True(t, re.MatchString("wrbbwr"))
+	assert.False(t, re.MatchString("xwrbbwr"))
+	assert.False(t, re.MatchString("rb"))
+}
+
+func TestTowelsRegexp(t *testing.T) {
+	assert.Equal(t, "^(wr|bb)+$", toRegexp([]string{"wr", "bb"}))
+}
 
 func Test_part1(t *testing.T) {
 	tests := []struct {
@@ -91,14 +97,14 @@ func Test_part1(t *testing.T) {
 			name:     "test part 1 simplified",
 			towels:   parseTowels(day1.ReadFile("input.txt")),
 			patterns: parsePatterns(day1.ReadFile("input.txt"))[5:6],
-			expected: 10,
+			expected: 0,
 		},
-		//{
-		//	name:     "test part 1",
-		//	towels:   parseTowels(day1.ReadFile("input.txt")),
-		//	patterns: parsePatterns(day1.ReadFile("input.txt")),
-		//	expected: 0,
-		//},
+		{
+			name:     "test part 1",
+			towels:   parseTowels(day1.ReadFile("input.txt")),
+			patterns: parsePatterns(day1.ReadFile("input.txt")),
+			expected: 304,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -120,37 +126,4 @@ func Test_parseTowels(t *testing.T) {
 
 func Test_parsePatterns(t *testing.T) {
 	assert.Equal(t, []string{"brubbru", "bopbop", "aaaa"}, parsePatterns(sampleInput))
-}
-
-func TestContinuations(t *testing.T) {
-	tests := []struct {
-		name     string
-		towels   []string
-		pattern  string
-		expected []string
-	}{
-		{
-			name:     "no continuations",
-			towels:   []string{"aa", "bb"},
-			pattern:  "abc",
-			expected: nil,
-		},
-		{
-			name:     "one continuation",
-			towels:   []string{"aa", "bb"},
-			pattern:  "aapippo",
-			expected: []string{"pippo"},
-		},
-		{
-			name:     "many continuation",
-			towels:   []string{"aa", "aap", "a"},
-			pattern:  "aapippo",
-			expected: []string{"pippo", "ippo", "apippo"},
-		},
-	}
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expected, continuations(test.towels, test.pattern))
-		})
-	}
 }
