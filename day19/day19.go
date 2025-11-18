@@ -23,3 +23,8 @@ func isPossible(towels []string, p string) bool {
 	}
 	return false
 }
+
+func parseTowels(input string) []string {
+	firstLine := strings.Split(input, "\n")[0]
+	return strings.Split(firstLine, ", ")
+}

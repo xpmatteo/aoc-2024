@@ -87,3 +87,14 @@ func Test_part1(t *testing.T) {
 		})
 	}
 }
+
+const sampleInput = `aa, bbb, cccc
+
+brubbru
+bopbop
+aaaa
+`
+
+func Test_parseTowels(t *testing.T) {
+	assert.Equal(t, []string{"aa", "bbb", "cccc"}, parseTowels(sampleInput))
+}
