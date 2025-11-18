@@ -8,7 +8,7 @@ import (
 func solvePart1(towels []string, patterns []string) int {
 	countOk := 0
 	for _, p := range patterns {
-		if isPossible(towels, p) {
+		if isPossibleIterative(towels, []string{p}) {
 			countOk++
 		}
 	}

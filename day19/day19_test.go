@@ -2,6 +2,7 @@ package day19
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/xpmatteo/aoc-2024/day1"
 	"testing"
 )
 
@@ -85,6 +86,12 @@ func Test_part1(t *testing.T) {
 				"bbrgwb",
 			},
 			expected: 6,
+		},
+		{
+			name:     "test part 1 simplified",
+			towels:   parseTowels(day1.ReadFile("input.txt")),
+			patterns: parsePatterns(day1.ReadFile("input.txt"))[:1],
+			expected: 1,
 		},
 		//{
 		//	name:     "test part 1",
