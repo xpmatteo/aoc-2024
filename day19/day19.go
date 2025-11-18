@@ -1,6 +1,7 @@
 package day19
 
 import (
+	"log"
 	"slices"
 	"strings"
 )
@@ -8,7 +9,8 @@ import (
 func solvePart1(towels []string, patterns []string) int {
 	countOk := 0
 	for _, p := range patterns {
-		if isPossibleIterative(towels, []string{p}) {
+		//if isPossibleIterative(towels, []string{p}) {
+		if isPossible(towels, p) {
 			countOk++
 		}
 	}
@@ -16,7 +18,9 @@ func solvePart1(towels []string, patterns []string) int {
 }
 
 func isPossibleIterative(towels []string, patterns []string) bool {
+	iteration := 0
 	for {
+		log.Printf("Iteration %d Patterns: %d", iteration, len(patterns))
 		if len(patterns) == 0 {
 			return false
 		}
@@ -28,6 +32,7 @@ func isPossibleIterative(towels []string, patterns []string) bool {
 			nextGeneration = append(nextGeneration, continuations(towels, p)...)
 		}
 		patterns = nextGeneration
+		iteration++
 	}
 }
 
@@ -42,6 +47,7 @@ func continuations(towels []string, pattern string) []string {
 }
 
 func isPossible(towels []string, p string) bool {
+	log.Printf("Pattern: %s", p)
 	if len(p) == 0 {
 		return true
 	}

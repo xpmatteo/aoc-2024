@@ -90,8 +90,8 @@ func Test_part1(t *testing.T) {
 		{
 			name:     "test part 1 simplified",
 			towels:   parseTowels(day1.ReadFile("input.txt")),
-			patterns: parsePatterns(day1.ReadFile("input.txt"))[:1],
-			expected: 1,
+			patterns: parsePatterns(day1.ReadFile("input.txt"))[5:6],
+			expected: 10,
 		},
 		//{
 		//	name:     "test part 1",
