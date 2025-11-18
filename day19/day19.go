@@ -1,6 +1,9 @@
 package day19
 
-import "strings"
+import (
+	"slices"
+	"strings"
+)
 
 func solvePart1(towels []string, patterns []string) int {
 	countOk := 0
@@ -10,6 +13,32 @@ func solvePart1(towels []string, patterns []string) int {
 		}
 	}
 	return countOk
+}
+
+func isPossibleIterative(towels []string, patterns []string) bool {
+	for {
+		if len(patterns) == 0 {
+			return false
+		}
+		var nextGeneration []string
+		for _, p := range patterns {
+			if slices.Contains(towels, p) {
+				return true
+			}
+			nextGeneration = append(nextGeneration, continuations(towels, p)...)
+		}
+		patterns = nextGeneration
+	}
+}
+
+func continuations(towels []string, pattern string) []string {
+	var result []string
+	for _, towel := range towels {
+		if strings.HasPrefix(pattern, towel) {
+			result = append(result, pattern[len(towel):])
+		}
+	}
+	return result
 }
 
 func isPossible(towels []string, p string) bool {

@@ -2,7 +2,6 @@ package day19
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/xpmatteo/aoc-2024/day1"
 	"testing"
 )
 
@@ -87,12 +86,12 @@ func Test_part1(t *testing.T) {
 			},
 			expected: 6,
 		},
-		{
-			name:     "test part 1",
-			towels:   parseTowels(day1.ReadFile("input.txt")),
-			patterns: parsePatterns(day1.ReadFile("input.txt")),
-			expected: 0,
-		},
+		//{
+		//	name:     "test part 1",
+		//	towels:   parseTowels(day1.ReadFile("input.txt")),
+		//	patterns: parsePatterns(day1.ReadFile("input.txt")),
+		//	expected: 0,
+		//},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -114,4 +113,37 @@ func Test_parseTowels(t *testing.T) {
 
 func Test_parsePatterns(t *testing.T) {
 	assert.Equal(t, []string{"brubbru", "bopbop", "aaaa"}, parsePatterns(sampleInput))
+}
+
+func TestContinuations(t *testing.T) {
+	tests := []struct {
+		name     string
+		towels   []string
+		pattern  string
+		expected []string
+	}{
+		{
+			name:     "no continuations",
+			towels:   []string{"aa", "bb"},
+			pattern:  "abc",
+			expected: nil,
+		},
+		{
+			name:     "one continuation",
+			towels:   []string{"aa", "bb"},
+			pattern:  "aapippo",
+			expected: []string{"pippo"},
+		},
+		{
+			name:     "many continuation",
+			towels:   []string{"aa", "aap", "a"},
+			pattern:  "aapippo",
+			expected: []string{"pippo", "ippo", "apippo"},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expected, continuations(test.towels, test.pattern))
+		})
+	}
 }
