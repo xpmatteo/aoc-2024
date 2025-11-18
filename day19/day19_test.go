@@ -48,10 +48,22 @@ func Test_part1(t *testing.T) {
 			expected: 2,
 		},
 		{
-			name:     "1 towel composed of 2 patterns",
+			name:     "1 towel , 1 pattern composed ok",
 			towels:   []string{"wr", "bb"},
 			patterns: []string{"wrbb"},
 			expected: 1,
+		},
+		{
+			name:     "2 towel, 2 patterns composed ok",
+			towels:   []string{"wr", "bb"},
+			patterns: []string{"wrbb", "bbwr"},
+			expected: 2,
+		},
+		{
+			name:     "2 towel, 3 patterns composed ok, 1 not ok",
+			towels:   []string{"wr", "bb"},
+			patterns: []string{"wrbb", "bbwr", "bbbb", "www"},
+			expected: 3,
 		},
 	}
 	for _, test := range tests {
