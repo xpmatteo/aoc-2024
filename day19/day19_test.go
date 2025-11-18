@@ -98,3 +98,7 @@ aaaa
 func Test_parseTowels(t *testing.T) {
 	assert.Equal(t, []string{"aa", "bbb", "cccc"}, parseTowels(sampleInput))
 }
+
+func Test_parsePatterns(t *testing.T) {
+	assert.Equal(t, []string{"brubbru", "bopbop", "aaaa"}, parsePatterns(sampleInput))
+}

@@ -28,3 +28,8 @@ func parseTowels(input string) []string {
 	firstLine := strings.Split(input, "\n")[0]
 	return strings.Split(firstLine, ", ")
 }
+
+func parsePatterns(input string) []string {
+	trimmedInput := strings.TrimRight(input, "\n")
+	return strings.Split(trimmedInput, "\n")[2:]
+}
