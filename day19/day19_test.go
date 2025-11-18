@@ -66,6 +66,12 @@ func Test_part1(t *testing.T) {
 			expected: 3,
 		},
 		{
+			name:     "a false start",
+			towels:   []string{"wr", "w", "rxx"},
+			patterns: []string{"wrxx"},
+			expected: 1,
+		},
+		{
 			name:   "small example part 1",
 			towels: []string{"r", "wr", "b", "g", "bwu", "rb", "gb", "br"},
 			patterns: []string{
