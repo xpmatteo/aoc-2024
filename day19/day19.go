@@ -33,6 +33,17 @@ func isPossible(memo map[string]bool, towels []string, p string) bool {
 	return false
 }
 
+func solvePart2(towels []string, patterns []string) int {
+	var memo = make(map[string]bool)
+	countOk := 0
+	for _, p := range patterns {
+		if isPossible(memo, towels, p) {
+			countOk++
+		}
+	}
+	return countOk
+}
+
 func parseTowels(input string) []string {
 	firstLine := strings.Split(input, "\n")[0]
 	return strings.Split(firstLine, ", ")

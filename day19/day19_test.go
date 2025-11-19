@@ -96,6 +96,102 @@ func Test_part1(t *testing.T) {
 	}
 }
 
+func Test_part2(t *testing.T) {
+	tests := []struct {
+		name     string
+		towels   []string
+		patterns []string
+		expected int
+		skip     bool
+	}{
+		{
+			name:     "1 towel 1 pattern ok",
+			towels:   []string{"wr"},
+			patterns: []string{"wr"},
+			expected: 1,
+		},
+		{
+			name:     "1 towel 2 pattern ok",
+			towels:   []string{"wr"},
+			patterns: []string{"wr", "wr"},
+			expected: 2,
+		},
+		{
+			name:     "1 towel 1 pattern ok, 1 pattern not ok",
+			towels:   []string{"wr"},
+			patterns: []string{"wr", "xx"},
+			expected: 1,
+		},
+		{
+			name:     "2 towel 2 pattern ok",
+			towels:   []string{"wr", "bb"},
+			patterns: []string{"bb", "bb"},
+			expected: 2,
+		},
+		{
+			name:     "1 towel , 1 pattern composed ok",
+			towels:   []string{"wr", "bb"},
+			patterns: []string{"wrbb"},
+			expected: 1,
+		},
+		{
+			name:     "2 towel, 2 patterns composed ok",
+			towels:   []string{"wr", "bb"},
+			patterns: []string{"wrbb", "bbwr"},
+			expected: 2,
+		},
+		{
+			name:     "can be composed in two ways",
+			towels:   []string{"a", "bc", "ab", "c"},
+			patterns: []string{"abc"},
+			expected: 2,
+		},
+		{
+			name:     "a false start",
+			towels:   []string{"wr", "w", "rxx"},
+			patterns: []string{"wrxx"},
+			expected: 1,
+		},
+		{
+			name:   "small example part 1",
+			towels: []string{"r", "wr", "b", "g", "bwu", "rb", "gb", "br"},
+			patterns: []string{
+				"brwrr",
+				"bggr",
+				"gbbr",
+				"rrbgbr",
+				"ubwu",
+				"bwurrg",
+				"brgr",
+				"bbrgwb",
+			},
+			expected: 16,
+		},
+		{
+			name:     "test part 1 simplified",
+			skip:     true,
+			towels:   parseTowels(day1.ReadFile("input.txt")),
+			patterns: parsePatterns(day1.ReadFile("input.txt"))[5:6],
+			expected: 0,
+		},
+		{
+			name:     "test part 1",
+			skip:     true,
+			towels:   parseTowels(day1.ReadFile("input.txt")),
+			patterns: parsePatterns(day1.ReadFile("input.txt")),
+			expected: 304,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if test.skip {
+				t.Skip()
+			}
+			assert.Equal(t, test.expected, solvePart2(test.towels, test.patterns))
+		})
+	}
+}
+
 const sampleInput = `aa, bbb, cccc
 
 brubbru
