@@ -169,17 +169,15 @@ func Test_part2(t *testing.T) {
 		},
 		{
 			name:     "test part 1 simplified",
-			skip:     true,
 			towels:   parseTowels(day1.ReadFile("input.txt")),
 			patterns: parsePatterns(day1.ReadFile("input.txt"))[5:6],
 			expected: 0,
 		},
 		{
 			name:     "test part 1",
-			skip:     true,
 			towels:   parseTowels(day1.ReadFile("input.txt")),
 			patterns: parsePatterns(day1.ReadFile("input.txt")),
-			expected: 304,
+			expected: 705756472327497,
 		},
 	}
 	for _, test := range tests {

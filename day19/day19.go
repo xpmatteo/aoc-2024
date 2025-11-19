@@ -34,14 +34,30 @@ func isPossible(memo map[string]bool, towels []string, p string) bool {
 }
 
 func solvePart2(towels []string, patterns []string) int {
-	var memo = make(map[string]bool)
-	countOk := 0
+	var memo = make(map[string]int)
+	count := 0
 	for _, p := range patterns {
-		if isPossible(memo, towels, p) {
-			countOk++
+		count += countWays(memo, towels, p)
+	}
+	return count
+}
+
+func countWays(memo map[string]int, towels []string, p string) int {
+	if len(p) == 0 {
+		return 1
+	}
+	memoizedResult, ok := memo[p]
+	if ok {
+		return memoizedResult
+	}
+	count := 0
+	for _, t := range towels {
+		if strings.HasPrefix(p, t) {
+			count += countWays(memo, towels, p[len(t):])
 		}
 	}
-	return countOk
+	memo[p] = count
+	return count
 }
 
 func parseTowels(input string) []string {
