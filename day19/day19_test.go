@@ -2,26 +2,9 @@ package day19
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/xpmatteo/aoc-2024/day1"
-	"regexp"
 	"testing"
 )
-
-func TestRegex(t *testing.T) {
-	re, err := regexp.Compile("^(wr|bb)+$")
-	require.NoError(t, err)
-
-	assert.True(t, re.MatchString("wr"))
-	assert.True(t, re.MatchString("bb"))
-	assert.True(t, re.MatchString("wrbbwr"))
-	assert.False(t, re.MatchString("xwrbbwr"))
-	assert.False(t, re.MatchString("rb"))
-}
-
-func TestTowelsRegexp(t *testing.T) {
-	assert.Equal(t, "^(wr|bb)+$", toRegexp([]string{"wr", "bb"}))
-}
 
 func Test_part1(t *testing.T) {
 	tests := []struct {

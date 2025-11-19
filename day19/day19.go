@@ -1,26 +1,36 @@
 package day19
 
 import (
-	"regexp"
 	"strings"
 )
 
 func solvePart1(towels []string, patterns []string) int {
-	re, err := regexp.Compile(toRegexp(towels))
-	if err != nil {
-		panic(err)
-	}
+	var memo = make(map[string]bool)
 	countOk := 0
 	for _, p := range patterns {
-		if re.MatchString(p) {
+		if isPossible(memo, towels, p) {
 			countOk++
 		}
 	}
 	return countOk
 }
 
-func toRegexp(ss []string) string {
-	return "^(" + strings.Join(ss, "|") + ")+$"
+func isPossible(memo map[string]bool, towels []string, p string) bool {
+	if len(p) == 0 {
+		return true
+	}
+	memoizedResult, ok := memo[p]
+	if ok {
+		return memoizedResult
+	}
+	for _, t := range towels {
+		if strings.HasPrefix(p, t) && isPossible(memo, towels, p[len(t):]) {
+			memo[p] = true
+			return true
+		}
+	}
+	memo[p] = false
+	return false
 }
 
 func parseTowels(input string) []string {
